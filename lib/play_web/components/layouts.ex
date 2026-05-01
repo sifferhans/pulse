@@ -37,48 +37,32 @@ defmodule PlayWeb.Layouts do
     ~H"""
     <header class="flex items-center px-4 sm:px-6 lg:px-8 py-3 border-b border-border-1">
       <div class="flex-1">
-        <a href="/" class="flex w-fit items-center gap-2">
-          <img src={~p"/images/logo.svg"} width="36" />
-          <span class="text-caption-1 font-semibold text-text-default">
-            v{Application.spec(:phoenix, :vsn)}
+        <.link navigate={~p"/monitors"} class="flex w-fit items-center gap-2">
+          <span class="inline-flex size-8 items-center justify-center rounded-full bg-primary-default text-on-primary">
+            <.icon name="hero-bolt-mini" class="size-4" />
           </span>
-        </a>
+          <span class="text-title-2 font-semibold text-text-default">Pulse</span>
+        </.link>
       </div>
       <div class="flex-none">
         <ul class="flex flex-row items-center gap-2 px-1">
           <li>
-            <a
-              href="https://phoenixframework.org/"
+            <.link
+              navigate={~p"/monitors"}
               class="inline-flex items-center px-3 py-2 rounded-md text-title-3 text-text-default hover:bg-surface-indent"
             >
-              Website
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://github.com/phoenixframework/phoenix"
-              class="inline-flex items-center px-3 py-2 rounded-md text-title-3 text-text-default hover:bg-surface-indent"
-            >
-              GitHub
-            </a>
+              Monitors
+            </.link>
           </li>
           <li>
             <.theme_toggle />
-          </li>
-          <li>
-            <a
-              href="https://hexdocs.pm/phoenix/overview.html"
-              class="inline-flex items-center gap-1 px-4 py-2 rounded-md text-title-3 font-medium bg-primary-default text-on-primary hover:bg-primary-contrast"
-            >
-              Get Started <span aria-hidden="true">&rarr;</span>
-            </a>
           </li>
         </ul>
       </div>
     </header>
 
-    <main class="px-4 py-20 sm:px-6 lg:px-8">
-      <div class="mx-auto max-w-2xl space-y-4">
+    <main class="px-4 py-10 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-5xl space-y-4">
         {render_slot(@inner_block)}
       </div>
     </main>

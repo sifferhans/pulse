@@ -18,6 +18,11 @@ defmodule PlayWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+
+    live "/monitors", MonitorLive.Index, :index
+    live "/monitors/new", MonitorLive.Form, :new
+    live "/monitors/:id", MonitorLive.Show, :show
+    live "/monitors/:id/edit", MonitorLive.Form, :edit
   end
 
   # Other scopes may use custom stacks.

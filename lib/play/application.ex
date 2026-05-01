@@ -14,8 +14,9 @@ defmodule Play.Application do
        repos: Application.fetch_env!(:play, :ecto_repos), skip: skip_migrations?()},
       {DNSCluster, query: Application.get_env(:play, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Play.PubSub},
-      # Start a worker by calling: Play.Worker.start_link(arg)
-      # {Play.Worker, arg},
+      {Registry, keys: :unique, name: Play.Monitoring.WorkerRegistry},
+      Play.Monitoring.WorkerSupervisor,
+      {Task, fn -> sync_monitoring_workers() end},
       # Start to serve requests, typically the last entry
       PlayWeb.Endpoint
     ]
@@ -37,5 +38,11 @@ defmodule Play.Application do
   defp skip_migrations?() do
     # By default, sqlite migrations are run when using a release
     System.get_env("RELEASE_NAME") == nil
+  end
+
+  defp sync_monitoring_workers do
+    if Application.get_env(:play, :start_monitoring_workers, true) do
+      Play.Monitoring.WorkerSupervisor.sync_all()
+    end
   end
 end

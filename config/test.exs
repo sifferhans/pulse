@@ -10,6 +10,10 @@ config :play, Play.Repo,
   pool_size: 5,
   pool: Ecto.Adapters.SQL.Sandbox
 
+# Don't auto-spawn monitor workers during tests; tests can start them
+# explicitly when needed.
+config :play, :start_monitoring_workers, false
+
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
 config :play, PlayWeb.Endpoint,
