@@ -85,10 +85,10 @@ defmodule Pulse.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["compile", "tailwind play", "esbuild play"],
+      "assets.build": ["compile", "tailwind pulse", "esbuild pulse"],
       "assets.deploy": [
-        "tailwind play --minify",
-        "esbuild play --minify",
+        "tailwind pulse --minify",
+        "esbuild pulse --minify",
         "phx.digest"
       ],
       precommit: [

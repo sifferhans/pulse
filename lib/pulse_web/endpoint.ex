@@ -6,7 +6,7 @@ defmodule PulseWeb.Endpoint do
   # Set :encryption_salt if you would also like to encrypt it.
   @session_options [
     store: :cookie,
-    key: "_play_key",
+    key: "_pulse_key",
     signing_salt: "x9Vm/kxP",
     same_site: "Lax"
   ]

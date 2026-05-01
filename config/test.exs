@@ -6,7 +6,7 @@ import Config
 # to provide built-in test partitioning in CI environment.
 # Run `mix help test` for more information.
 config :pulse, Pulse.Repo,
-  database: Path.expand("../play_test.db", __DIR__),
+  database: Path.expand("../pulse_test.db", __DIR__),
   pool_size: 5,
   pool: Ecto.Adapters.SQL.Sandbox
 

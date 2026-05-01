@@ -53,23 +53,23 @@ defmodule PulseWeb.Telemetry do
       ),
 
       # Database Metrics
-      summary("play.repo.query.total_time",
+      summary("pulse.repo.query.total_time",
         unit: {:native, :millisecond},
         description: "The sum of the other measurements"
       ),
-      summary("play.repo.query.decode_time",
+      summary("pulse.repo.query.decode_time",
         unit: {:native, :millisecond},
         description: "The time spent decoding the data received from the database"
       ),
-      summary("play.repo.query.query_time",
+      summary("pulse.repo.query.query_time",
         unit: {:native, :millisecond},
         description: "The time spent executing the query"
       ),
-      summary("play.repo.query.queue_time",
+      summary("pulse.repo.query.queue_time",
         unit: {:native, :millisecond},
         description: "The time spent waiting for a database connection"
       ),
-      summary("play.repo.query.idle_time",
+      summary("pulse.repo.query.idle_time",
         unit: {:native, :millisecond},
         description:
           "The time the connection spent waiting before being checked out for the query"

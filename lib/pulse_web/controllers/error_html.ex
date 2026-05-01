@@ -10,8 +10,8 @@ defmodule PulseWeb.ErrorHTML do
   # uncomment the embed_templates/1 call below
   # and add pages to the error directory:
   #
-  #   * lib/play_web/controllers/error_html/404.html.heex
-  #   * lib/play_web/controllers/error_html/500.html.heex
+  #   * lib/pulse_web/controllers/error_html/404.html.heex
+  #   * lib/pulse_web/controllers/error_html/500.html.heex
   #
   # embed_templates "error_html/*"
 

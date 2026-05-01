@@ -2,7 +2,7 @@ import Config
 
 # Configure your database
 config :pulse, Pulse.Repo,
-  database: Path.expand("../play_dev.db", __DIR__),
+  database: Path.expand("../pulse_dev.db", __DIR__),
   pool_size: 5,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true
@@ -56,7 +56,7 @@ config :pulse, PulseWeb.Endpoint,
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/play_web/(?:controllers|live|components|router)/?.*\.(ex|heex)$"
+      ~r"lib/pulse_web/(?:controllers|live|components|router)/?.*\.(ex|heex)$"
     ]
   ]
 
