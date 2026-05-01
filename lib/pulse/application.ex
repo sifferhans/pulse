@@ -25,6 +25,7 @@ defmodule Pulse.Application do
       {Registry, keys: :unique, name: Pulse.Monitoring.WorkerRegistry},
       Pulse.Monitoring.WorkerSupervisor,
       {Task, fn -> sync_monitoring_workers() end},
+      heartbeat_detector_spec(),
       # Start to serve requests, typically the last entry
       PulseWeb.Endpoint
     ]
@@ -32,7 +33,13 @@ defmodule Pulse.Application do
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Pulse.Supervisor]
-    Supervisor.start_link(children, opts)
+    Supervisor.start_link(Enum.reject(children, &is_nil/1), opts)
+  end
+
+  defp heartbeat_detector_spec do
+    if Application.get_env(:pulse, :start_heartbeat_detector, true) do
+      Pulse.Heartbeats.Detector
+    end
   end
 
   # Tell Phoenix to update the endpoint configuration

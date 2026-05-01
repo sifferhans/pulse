@@ -13,6 +13,7 @@ config :pulse, Pulse.Repo,
 # Don't auto-spawn monitor workers during tests; tests can start them
 # explicitly when needed.
 config :pulse, :start_monitoring_workers, false
+config :pulse, :start_heartbeat_detector, false
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.

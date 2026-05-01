@@ -36,33 +36,27 @@ defmodule PulseWeb.Layouts do
   def app(assigns) do
     ~H"""
     <header class="flex items-center px-4 sm:px-6 lg:px-8 py-3 border-b border-border-1">
-      <div class="flex-1">
-        <.link navigate={~p"/monitors"} class="flex w-fit items-center gap-2">
-          <span class="inline-flex size-8 items-center justify-center rounded-full bg-primary-default text-on-primary">
-            <.icon name="hero-bolt-mini" class="size-4" />
-          </span>
-          <span class="text-title-2 font-semibold text-text-default">Pulse</span>
-        </.link>
-      </div>
-      <div class="flex-none">
-        <ul class="flex flex-row items-center gap-2 px-1">
-          <li>
-            <.link
-              navigate={~p"/monitors"}
-              class="inline-flex items-center px-3 py-2 rounded-md text-title-3 text-text-default hover:bg-surface-indent"
-            >
-              Monitors
-            </.link>
-          </li>
-          <li>
-            <.theme_toggle />
-          </li>
-        </ul>
+      <div class="mx-auto max-w-5xl w-full flex items-center">
+        <div class="flex-1">
+          <.link navigate={~p"/"} class="flex w-fit items-center gap-2">
+            <span class="inline-flex size-8 items-center justify-center rounded-full bg-primary-default text-on-primary">
+              <.icon name="hero-bolt-mini" class="size-4" />
+            </span>
+            <span class="text-title-2 font-semibold text-text-default">Pulse</span>
+          </.link>
+        </div>
+        <div class="flex-none">
+          <ul class="flex flex-row items-center gap-2">
+            <li>
+              <.theme_toggle />
+            </li>
+          </ul>
+        </div>
       </div>
     </header>
 
     <main class="px-4 py-10 sm:px-6 lg:px-8">
-      <div class="mx-auto max-w-5xl space-y-4">
+      <div class="mx-auto max-w-5xl space-y-10">
         {render_slot(@inner_block)}
       </div>
     </main>
@@ -122,7 +116,7 @@ defmodule PulseWeb.Layouts do
   def theme_toggle(assigns) do
     ~H"""
     <div class="relative flex flex-row items-center rounded-full border border-border-1 bg-surface-indent">
-      <div class="absolute w-1/3 h-full rounded-full bg-surface-raise shadow-resting left-0 [[data-theme=light]_&]:left-1/3 [[data-theme=dark]_&]:left-2/3 transition-[left]" />
+      <div class="absolute w-1/3 h-full rounded-full bg-surface-raise shadow-resting gradient-border left-0 [[data-theme=light]_&]:left-1/3 [[data-theme=dark]_&]:left-2/3 transition-[left]" />
 
       <button
         class="relative flex p-2 cursor-pointer w-1/3 justify-center text-text-default"

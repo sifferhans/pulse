@@ -135,7 +135,7 @@ defmodule PulseWeb.MonitorLive.Form do
           field={@form[:headers_text]}
           type="textarea"
           label="Request headers (optional)"
-          placeholder={"Authorization: Bearer xxx\nContent-Type: application/json"}
+          placeholder="Authorization: Bearer xxx\nContent-Type: application/json"
           rows="3"
         />
 
@@ -151,7 +151,7 @@ defmodule PulseWeb.MonitorLive.Form do
         <.input field={@form[:enabled]} type="switch" label="Enabled" />
 
         <div class="flex items-center justify-end gap-2 pt-2">
-          <.button variant="secondary" navigate={~p"/monitors"} label="Cancel" />
+          <.button variant="secondary" navigate={~p"/"} label="Cancel" />
           <.button type="submit" label="Save monitor" />
         </div>
       </.form>

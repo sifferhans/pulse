@@ -26,7 +26,7 @@ defmodule PulseWeb.MonitorLive.Show do
     {:noreply,
      socket
      |> put_flash(:info, "Monitor deleted")
-     |> push_navigate(to: ~p"/monitors")}
+     |> push_navigate(to: ~p"/")}
   end
 
   def handle_info({event, _payload}, socket)
@@ -55,7 +55,7 @@ defmodule PulseWeb.MonitorLive.Show do
     {:noreply,
      socket
      |> put_flash(:info, "Monitor deleted")
-     |> push_navigate(to: ~p"/monitors")}
+     |> push_navigate(to: ~p"/")}
   end
 
   defp load_check_data(socket) do
@@ -216,20 +216,6 @@ defmodule PulseWeb.MonitorLive.Show do
         </ul>
       </section>
     </Layouts.app>
-    """
-  end
-
-  attr :label, :string, required: true
-  slot :inner_block, required: true
-
-  defp stat_card(assigns) do
-    ~H"""
-    <div class="rounded-xl border border-border-1 bg-surface-default p-4">
-      <div class="text-caption-1 text-text-muted">{@label}</div>
-      <div class="mt-1 text-title-1 font-semibold text-text-default">
-        {render_slot(@inner_block)}
-      </div>
-    </div>
     """
   end
 

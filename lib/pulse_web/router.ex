@@ -17,12 +17,19 @@ defmodule PulseWeb.Router do
   scope "/", PulseWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", OverviewLive.Index, :index
 
-    live "/monitors", MonitorLive.Index, :index
     live "/monitors/new", MonitorLive.Form, :new
     live "/monitors/:id", MonitorLive.Show, :show
     live "/monitors/:id/edit", MonitorLive.Form, :edit
+
+    live "/heartbeats/new", HeartbeatLive.Form, :new
+    live "/heartbeats/:id", HeartbeatLive.Show, :show
+    live "/heartbeats/:id/edit", HeartbeatLive.Form, :edit
+  end
+
+  scope "/ping", PulseWeb do
+    match :*, "/:slug", PingController, :ping
   end
 
   # Other scopes may use custom stacks.
