@@ -24,15 +24,6 @@
     display: contents;
 }
 
-/*
- * Design system tokens ported from bcc-media-play Flutter app.
- * See: bcc-media-play/flutter/lib/features/design/themes/{light,dark}.dart
- *
- * Colors are exposed as Tailwind theme tokens that resolve to CSS custom
- * properties. The actual color values are set on :root (light) and .dark
- * (dark), so toggling the `dark` class on <html> swaps the entire palette.
- */
-
 @theme {
     --font-sans: "Archivo", ui-sans-serif, system-ui, sans-serif;
 
@@ -218,7 +209,6 @@
     }
 }
 
-/* Gradient border using mask-composite on rounded elements */
 @utility gradient-border {
     position: relative;
     &::before {
@@ -261,12 +251,6 @@
     }
 }
 
-/* Required for Ark UI Tour absolute positioning to cover full document */
-body {
-    position: relative;
-}
-
-/* Hide scrollbar for horizontal scroll sections */
 @utility scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -275,7 +259,6 @@ body {
     }
 }
 
-/* Loading spinner — matches DesignLoadingState from bcc-media-play. */
 @utility spinner-rotate {
     animation: spinner-spin 0.75s linear infinite;
 }
