@@ -624,7 +624,7 @@ defmodule PlayWeb.CoreComponents do
         role="tooltip"
         style={"--tooltip-gap: #{@gap}px"}
         class={[
-          "pointer-events-none absolute z-50 max-w-xs whitespace-normal rounded-lg border border-border-1 bg-surface-raise px-2.5 py-1.5",
+          "pointer-events-none absolute z-50 max-w-xs whitespace-normal rounded-lg gradient-border bg-surface-raise px-2.5 py-1.5",
           "text-caption-1 text-text-default shadow-floating",
           "opacity-0 scale-95 transition-[opacity,transform] duration-200 ease-out-expo",
           "group-hover:opacity-100 group-hover:scale-100",
@@ -815,8 +815,7 @@ defmodule PlayWeb.CoreComponents do
   attr :disabled, :boolean, default: false
   attr :class, :any, default: nil
 
-  attr :rest, :global,
-    include: ~w(form required readonly phx-change phx-blur phx-click)
+  attr :rest, :global, include: ~w(form required readonly phx-change phx-blur phx-click)
 
   def switch(assigns) do
     ~H"""

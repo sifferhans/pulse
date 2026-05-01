@@ -7,4 +7,10 @@ defmodule PlayWeb.PageHTML do
   use PlayWeb, :html
 
   embed_templates "page_html/*"
+
+  @doc false
+  def status_variant("active"), do: "success"
+  def status_variant("pending"), do: "warning"
+  def status_variant("inactive"), do: "neutral"
+  def status_variant(_), do: "neutral"
 end
