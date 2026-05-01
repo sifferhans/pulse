@@ -1,4 +1,4 @@
-defmodule Play.Repo.Migrations.CreateMonitoringTables do
+defmodule Pulse.Repo.Migrations.CreateMonitoringTables do
   use Ecto.Migration
 
   def change do

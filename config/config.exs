@@ -7,19 +7,19 @@
 # General application configuration
 import Config
 
-config :play,
-  ecto_repos: [Play.Repo],
+config :pulse,
+  ecto_repos: [Pulse.Repo],
   generators: [timestamp_type: :utc_datetime]
 
 # Configures the endpoint
-config :play, PlayWeb.Endpoint,
+config :pulse, PulseWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
-    formats: [html: PlayWeb.ErrorHTML, json: PlayWeb.ErrorJSON],
+    formats: [html: PulseWeb.ErrorHTML, json: PulseWeb.ErrorJSON],
     layout: false
   ],
-  pubsub_server: Play.PubSub,
+  pubsub_server: Pulse.PubSub,
   live_view: [signing_salt: "uMVzCjwR"]
 
 # Configures the mailer
@@ -29,7 +29,7 @@ config :play, PlayWeb.Endpoint,
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :play, Play.Mailer, adapter: Swoosh.Adapters.Local
+config :pulse, Pulse.Mailer, adapter: Swoosh.Adapters.Local
 
 # Configure esbuild (the version is required)
 config :esbuild,

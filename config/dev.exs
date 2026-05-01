@@ -1,7 +1,7 @@
 import Config
 
 # Configure your database
-config :play, Play.Repo,
+config :pulse, Pulse.Repo,
   database: Path.expand("../play_dev.db", __DIR__),
   pool_size: 5,
   stacktrace: true,
@@ -13,7 +13,7 @@ config :play, Play.Repo,
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we can use it
 # to bundle .js and .css sources.
-config :play, PlayWeb.Endpoint,
+config :pulse, PulseWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
   http: [ip: {127, 0, 0, 1}, port: String.to_integer(System.get_env("PORT") || "4000")],
@@ -22,8 +22,8 @@ config :play, PlayWeb.Endpoint,
   debug_errors: true,
   secret_key_base: "LKi4uNVQFQI7I1eWl8NhAag7snkjsQdZoW8Dy6lwHHiEkHioZvItP09LbFLvsi1Q",
   watchers: [
-    esbuild: {Esbuild, :install_and_run, [:play, ~w(--sourcemap=inline --watch)]},
-    tailwind: {Tailwind, :install_and_run, [:play, ~w(--watch)]}
+    esbuild: {Esbuild, :install_and_run, [:pulse, ~w(--sourcemap=inline --watch)]},
+    tailwind: {Tailwind, :install_and_run, [:pulse, ~w(--watch)]}
   ]
 
 # ## SSL Support
@@ -50,7 +50,7 @@ config :play, PlayWeb.Endpoint,
 # different ports.
 
 # Watch static and templates for browser reloading.
-config :play, PlayWeb.Endpoint,
+config :pulse, PulseWeb.Endpoint,
   live_reload: [
     web_console_logger: true,
     patterns: [
@@ -61,7 +61,7 @@ config :play, PlayWeb.Endpoint,
   ]
 
 # Enable dev routes for dashboard and mailbox
-config :play, dev_routes: true
+config :pulse, dev_routes: true
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :default_formatter, format: "[$level] $message\n"

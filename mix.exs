@@ -1,9 +1,9 @@
-defmodule Play.MixProject do
+defmodule Pulse.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :play,
+      app: :pulse,
       version: "0.1.0",
       elixir: "~> 1.15",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -21,7 +21,7 @@ defmodule Play.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {Play.Application, []},
+      mod: {Pulse.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end

@@ -1,0 +1,387 @@
+<Layouts.flash_group flash={@flash} />
+
+<% surfaces = [
+  {"surface-default", "bg-surface-default"},
+  {"surface-indent", "bg-surface-indent"},
+  {"surface-raise", "bg-surface-raise"}
+] %>
+<% accents = [
+  {"primary-default", "bg-primary-default"},
+  {"primary-contrast", "bg-primary-contrast"},
+  {"on-primary", "bg-on-primary"}
+] %>
+<% semantics = [
+  {"semantic-success", "bg-semantic-success"},
+  {"semantic-warning", "bg-semantic-warning"},
+  {"semantic-info", "bg-semantic-info"},
+  {"semantic-error", "bg-semantic-error"}
+] %>
+<% text_swatches = [
+  {"text-default", "text-text-default"},
+  {"text-muted", "text-text-muted"},
+  {"text-hint", "text-text-hint"}
+] %>
+<% typography = [
+  {"text-heading-1", "text-heading-1"},
+  {"text-heading-2", "text-heading-2"},
+  {"text-heading-3", "text-heading-3"},
+  {"text-title-1", "text-title-1"},
+  {"text-title-2", "text-title-2"},
+  {"text-title-3", "text-title-3"},
+  {"text-body-1", "text-body-1"},
+  {"text-body-2", "text-body-2"},
+  {"text-body-3", "text-body-3"},
+  {"text-caption-1", "text-caption-1"},
+  {"text-caption-2", "text-caption-2"}
+] %>
+<% sample_users = [
+  %{name: "Aria Chen", role: "Designer", status: "active"},
+  %{name: "Ben Sørensen", role: "Engineer", status: "pending"},
+  %{name: "Maya Patel", role: "PM", status: "inactive"}
+] %>
+
+<div class="min-h-screen flex flex-col">
+  <header class="sticky top-0 z-40 border-b border-border-1 bg-surface-default/85 backdrop-blur">
+    <div class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex items-center gap-3">
+        <img src={~p"/images/logo.svg"} width="28" height="28" alt="Pulse" />
+        <span class="text-title-2 text-text-default">Design system</span>
+        <.badge variant="info" label={"Phoenix v#{Application.spec(:phoenix, :vsn)}"} />
+      </div>
+      <Layouts.theme_toggle />
+    </div>
+  </header>
+
+  <main class="mx-auto w-full max-w-5xl flex-1 space-y-20 px-4 sm:px-6 lg:px-8 py-12">
+    <section class="space-y-3">
+      <h1 class="text-heading-1 text-text-default">Design system</h1>
+      <p class="text-body-1 text-text-muted max-w-2xl">
+        Tokens, typography, and components used across this project. Toggle the theme
+        in the header to see how everything responds.
+      </p>
+    </section>
+
+    <section id="colors" class="space-y-8">
+      <header class="space-y-1">
+        <h2 class="text-heading-2 text-text-default">Colors</h2>
+        <p class="text-body-2 text-text-muted">
+          CSS-variable backed tokens. The actual values swap with the theme.
+        </p>
+      </header>
+
+      <div class="space-y-8">
+        <div>
+          <p class="mb-3 text-caption-1 font-semibold uppercase tracking-wide text-text-hint">
+            Surfaces
+          </p>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div
+              :for={{token, class} <- surfaces}
+              class="rounded-xl border border-border-1 bg-surface-default p-3"
+            >
+              <div class={["h-16 rounded-lg border border-border-1", class]} />
+              <p class="mt-2 text-caption-1 font-medium text-text-default">{token}</p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <p class="mb-3 text-caption-1 font-semibold uppercase tracking-wide text-text-hint">
+            Accent
+          </p>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div
+              :for={{token, class} <- accents}
+              class="rounded-xl border border-border-1 bg-surface-default p-3"
+            >
+              <div class={["h-16 rounded-lg", class]} />
+              <p class="mt-2 text-caption-1 font-medium text-text-default">{token}</p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <p class="mb-3 text-caption-1 font-semibold uppercase tracking-wide text-text-hint">
+            Semantic
+          </p>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div
+              :for={{token, class} <- semantics}
+              class="rounded-xl border border-border-1 bg-surface-default p-3"
+            >
+              <div class={["h-16 rounded-lg", class]} />
+              <p class="mt-2 text-caption-1 font-medium text-text-default">{token}</p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <p class="mb-3 text-caption-1 font-semibold uppercase tracking-wide text-text-hint">
+            Text
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div
+              :for={{token, class} <- text_swatches}
+              class="flex items-center justify-between gap-3 rounded-xl border border-border-1 bg-surface-default p-4"
+            >
+              <span class={["text-heading-3", class]}>Aa</span>
+              <span class="text-caption-1 font-medium text-text-default">{token}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="typography" class="space-y-6">
+      <header class="space-y-1">
+        <h2 class="text-heading-2 text-text-default">Typography</h2>
+        <p class="text-body-2 text-text-muted">
+          Eleven sizes covering display, body, and caption.
+        </p>
+      </header>
+
+      <div class="rounded-2xl border border-border-1 bg-surface-default px-5 divide-y divide-border-1">
+        <div
+          :for={{token, class} <- typography}
+          class="flex flex-wrap items-baseline justify-between gap-4 py-4"
+        >
+          <span class={[class, "text-text-default"]}>The quick brown fox</span>
+          <code class="text-caption-1 text-text-hint">{token}</code>
+        </div>
+      </div>
+    </section>
+
+    <section id="shadows" class="space-y-6">
+      <header class="space-y-1">
+        <h2 class="text-heading-2 text-text-default">Shadows</h2>
+        <p class="text-body-2 text-text-muted">
+          Two elevations: resting for cards, floating for popovers and toasts.
+        </p>
+      </header>
+
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div class="rounded-2xl bg-surface-raise p-6 shadow-resting gradient-border">
+          <p class="text-title-2 text-text-default">shadow-resting</p>
+          <p class="mt-1 text-body-3 text-text-muted">Cards, buttons, table rows.</p>
+        </div>
+        <div class="rounded-2xl bg-surface-raise p-6 shadow-floating gradient-border">
+          <p class="text-title-2 text-text-default">shadow-floating</p>
+          <p class="mt-1 text-body-3 text-text-muted">Tooltips, popovers, toasts.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="buttons" class="space-y-6">
+      <header class="space-y-1">
+        <h2 class="text-heading-2 text-text-default">Buttons</h2>
+        <p class="text-body-2 text-text-muted">
+          Three variants × three sizes, plus icons and the loading state.
+        </p>
+      </header>
+
+      <div class="space-y-6 rounded-2xl border border-border-1 bg-surface-default p-6">
+        <div class="space-y-2">
+          <p class="text-caption-1 font-semibold uppercase tracking-wide text-text-hint">
+            Variants
+          </p>
+          <div class="flex flex-wrap items-center gap-3">
+            <.button variant="primary" label="Primary" />
+            <.button variant="secondary" label="Secondary" />
+            <.button variant="tertiary" label="Tertiary" />
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <p class="text-caption-1 font-semibold uppercase tracking-wide text-text-hint">Sizes</p>
+          <div class="flex flex-wrap items-center gap-3">
+            <.button size="small" label="Small" />
+            <.button size="medium" label="Medium" />
+            <.button size="large" label="Large" />
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <p class="text-caption-1 font-semibold uppercase tracking-wide text-text-hint">
+            With icons
+          </p>
+          <div class="flex flex-wrap items-center gap-3">
+            <.button icon="hero-plus" label="Add item" />
+            <.button variant="secondary" icon="hero-arrow-down-tray" label="Download" />
+            <.button variant="tertiary" icon="hero-trash" label="Delete" />
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <p class="text-caption-1 font-semibold uppercase tracking-wide text-text-hint">
+            States
+          </p>
+          <div class="flex flex-wrap items-center gap-3">
+            <.button label="Disabled" disabled />
+            <.button label="Loading" loading />
+            <.button variant="secondary" label="Disabled" disabled />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="badges" class="space-y-6">
+      <header class="space-y-1">
+        <h2 class="text-heading-2 text-text-default">Badges</h2>
+        <p class="text-body-2 text-text-muted">Compact status pills. Five semantic variants.</p>
+      </header>
+      <div class="rounded-2xl border border-border-1 bg-surface-default p-6">
+        <div class="flex flex-wrap gap-2">
+          <.badge variant="neutral" label="Neutral" />
+          <.badge variant="info" label="Info" />
+          <.badge variant="success" label="Success" />
+          <.badge variant="warning" label="Warning" />
+          <.badge variant="error" label="Error" />
+        </div>
+      </div>
+    </section>
+
+    <section id="banners" class="space-y-6">
+      <header class="space-y-1">
+        <h2 class="text-heading-2 text-text-default">Banners</h2>
+        <p class="text-body-2 text-text-muted">Full-width inline notices.</p>
+      </header>
+      <div class="space-y-3">
+        <.banner variant="info" icon="hero-information-circle">
+          New here? Read the README for an overview.
+        </.banner>
+        <.banner variant="success" icon="hero-check-circle">
+          Your changes have been saved.
+        </.banner>
+        <.banner variant="warning" icon="hero-exclamation-triangle">
+          You have unsaved changes.
+        </.banner>
+        <.banner variant="error" icon="hero-x-circle">
+          Could not connect to the database.
+        </.banner>
+        <.banner variant="neutral" icon="hero-clock">
+          Last synced 4 minutes ago.
+        </.banner>
+      </div>
+    </section>
+
+    <section id="avatars" class="space-y-6">
+      <header class="space-y-1">
+        <h2 class="text-heading-2 text-text-default">Avatars</h2>
+        <p class="text-body-2 text-text-muted">Initials fallback in three sizes.</p>
+      </header>
+      <div class="flex items-center gap-6 rounded-2xl border border-border-1 bg-surface-default p-6">
+        <.avatar size="small" name="Aria Chen" />
+        <.avatar size="medium" name="Ben Sørensen" />
+        <.avatar size="large" name="Maya Patel" />
+      </div>
+    </section>
+
+    <section id="switch" class="space-y-6">
+      <header class="space-y-1">
+        <h2 class="text-heading-2 text-text-default">Switch</h2>
+        <p class="text-body-2 text-text-muted">Toggle for binary settings.</p>
+      </header>
+      <div class="flex flex-wrap items-center gap-8 rounded-2xl border border-border-1 bg-surface-default p-6">
+        <.switch label="Enable notifications" />
+        <.switch label="Use system theme" checked />
+        <.switch label="Beta features" disabled />
+      </div>
+    </section>
+
+    <section id="tooltip" class="space-y-6">
+      <header class="space-y-1">
+        <h2 class="text-heading-2 text-text-default">Tooltip</h2>
+        <p class="text-body-2 text-text-muted">Hover or focus a trigger to reveal helper text.</p>
+      </header>
+      <div class="flex flex-wrap items-center justify-center gap-6 rounded-2xl border border-border-1 bg-surface-default p-10">
+        <.tooltip text="Save your changes" placement="top">
+          <.button variant="secondary" icon="hero-bookmark-square" label="Top" />
+        </.tooltip>
+        <.tooltip text="Open in a new tab" placement="bottom">
+          <.button variant="secondary" icon="hero-arrow-top-right-on-square" label="Bottom" />
+        </.tooltip>
+        <.tooltip text="More actions" placement="left">
+          <.button variant="secondary" icon="hero-ellipsis-horizontal" label="Left" />
+        </.tooltip>
+        <.tooltip text="Helpful hint" placement="right">
+          <.button variant="secondary" icon="hero-question-mark-circle" label="Right" />
+        </.tooltip>
+      </div>
+    </section>
+
+    <section id="view-states" class="space-y-6">
+      <header class="space-y-1">
+        <h2 class="text-heading-2 text-text-default">View states</h2>
+        <p class="text-body-2 text-text-muted">Empty, error, and loading placeholders.</p>
+      </header>
+      <div class="grid sm:grid-cols-3 gap-4">
+        <div class="h-64 rounded-2xl border border-border-1 bg-surface-default">
+          <.empty_state description="Add an item to get started.">
+            <:action>
+              <.button size="small" icon="hero-plus" label="Add" />
+            </:action>
+          </.empty_state>
+        </div>
+        <div class="h-64 rounded-2xl border border-border-1 bg-surface-default">
+          <.error_state description="We couldn't load the latest data.">
+            <:action>
+              <.button size="small" variant="secondary" label="Retry" />
+            </:action>
+          </.error_state>
+        </div>
+        <div class="h-64 rounded-2xl border border-border-1 bg-surface-default">
+          <.loading_state />
+        </div>
+      </div>
+    </section>
+
+    <section id="tables" class="space-y-8">
+      <header class="space-y-1">
+        <h2 class="text-heading-2 text-text-default">Tables</h2>
+        <p class="text-body-2 text-text-muted">
+          <code class="text-caption-1">simple_table</code>
+          for static rows; <code class="text-caption-1">table</code>
+          for streamed or structured data.
+        </p>
+      </header>
+
+      <div class="space-y-3">
+        <p class="text-caption-1 font-semibold uppercase tracking-wide text-text-hint">
+          simple_table
+        </p>
+        <.simple_table columns={["Name", "Role", "Status"]}>
+          <tr :for={user <- sample_users} class="border-t border-border-1">
+            <td class="px-4 py-3 text-body-3 text-text-default">{user.name}</td>
+            <td class="px-4 py-3 text-body-3 text-text-muted">{user.role}</td>
+            <td class="px-4 py-3">
+              <.badge
+                variant={status_variant(user.status)}
+                label={String.capitalize(user.status)}
+              />
+            </td>
+          </tr>
+        </.simple_table>
+      </div>
+
+      <div class="space-y-3">
+        <p class="text-caption-1 font-semibold uppercase tracking-wide text-text-hint">table</p>
+        <.table id="users" rows={sample_users}>
+          <:col :let={user} label="Name">{user.name}</:col>
+          <:col :let={user} label="Role">{user.role}</:col>
+          <:col :let={user} label="Status">
+            <.badge variant={status_variant(user.status)} label={String.capitalize(user.status)} />
+          </:col>
+        </.table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="mt-8 border-t border-border-1 px-4 sm:px-6 lg:px-8 py-6">
+    <p class="text-caption-1 text-text-hint text-center">
+      Phoenix v{Application.spec(:phoenix, :vsn)} · LiveView v{Application.spec(
+        :phoenix_live_view,
+        :vsn
+      )}
+    </p>
+  </footer>
+</div>

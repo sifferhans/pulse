@@ -1,4 +1,4 @@
-# Play
+# Pulse
 
 To start your Phoenix server:
 
