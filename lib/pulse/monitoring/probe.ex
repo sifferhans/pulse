@@ -27,7 +27,6 @@ defmodule Pulse.Monitoring.Probe do
         headers: monitor.headers || %{},
         body: probe_body(monitor),
         receive_timeout: monitor.timeout_ms,
-        connect_options: [timeout: monitor.timeout_ms],
         finch: Pulse.Monitoring.Finch,
         retry: false,
         decode_body: false

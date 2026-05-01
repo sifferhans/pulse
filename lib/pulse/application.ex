@@ -16,7 +16,12 @@ defmodule Pulse.Application do
       {Phoenix.PubSub, name: Pulse.PubSub},
       {Finch,
        name: Pulse.Monitoring.Finch,
-       pools: %{default: [pool_max_idle_time: 1_000]}},
+       pools: %{
+         default: [
+           pool_max_idle_time: 1_000,
+           conn_opts: [transport_opts: [timeout: 5_000]]
+         ]
+       }},
       {Registry, keys: :unique, name: Pulse.Monitoring.WorkerRegistry},
       Pulse.Monitoring.WorkerSupervisor,
       {Task, fn -> sync_monitoring_workers() end},

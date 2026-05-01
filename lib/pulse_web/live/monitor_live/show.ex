@@ -155,8 +155,8 @@ defmodule PulseWeb.MonitorLive.Show do
         </.stat_card>
       </div>
 
-      <section class="rounded-xl border border-border-1 bg-surface-default p-4">
-        <h2 class="mb-3 px-2 text-title-2 font-semibold text-text-default">Recent checks</h2>
+      <section class="rounded-xl border border-border-1 bg-surface-default px-4 py-3">
+        <h2 class="mb-3 text-title-2 font-semibold text-text-default">Recent checks</h2>
         <.latency_strip checks={@checks} />
       </section>
 
@@ -281,7 +281,7 @@ defmodule PulseWeb.MonitorLive.Show do
 
   defp latency_strip(assigns) do
     ~H"""
-    <div class="flex items-end gap-1 px-2 h-16">
+    <div class="flex items-end gap-1 h-16">
       <div :if={@checks == []} class="text-body-3 text-text-hint">No data yet.</div>
       <div
         :for={check <- Enum.reverse(@checks)}
