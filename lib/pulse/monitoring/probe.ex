@@ -26,6 +26,7 @@ defmodule Pulse.Monitoring.Probe do
         url: monitor.url,
         receive_timeout: monitor.timeout_ms,
         connect_options: [timeout: monitor.timeout_ms],
+        finch: Pulse.Monitoring.Finch,
         retry: false,
         decode_body: false
       )

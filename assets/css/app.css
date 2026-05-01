@@ -130,8 +130,8 @@
 @layer base {
     :root {
         /* Light theme */
-        --ds-primary-default: #b3acff;
-        --ds-primary-contrast: #7569f7;
+        --ds-primary-default: #3df0a8;
+        --ds-primary-contrast: #10b981;
         --ds-on-primary: #130d19;
 
         --ds-surface-default: #ffffff;
@@ -163,8 +163,8 @@
     [data-theme="dark"] {
         /* Dark theme — only themed tokens are overridden; the fixed
        light/dark text tokens stay the same across both themes. */
-        --ds-primary-default: #b3acff;
-        --ds-primary-contrast: #b3acff;
+        --ds-primary-default: #3df0a8;
+        --ds-primary-contrast: #22d195;
         --ds-on-primary: #130d19;
 
         --ds-surface-default: #1c1f1d;
@@ -240,7 +240,7 @@
         padding: 1px;
         background: linear-gradient(
             to bottom,
-            rgb(0 0 0 / 0.05),
+            rgb(0 0 0 / 0),
             rgb(0 0 0 / 0.12)
         );
         mask:

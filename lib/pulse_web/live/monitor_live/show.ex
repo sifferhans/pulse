@@ -283,17 +283,16 @@ defmodule PulseWeb.MonitorLive.Show do
     ~H"""
     <div class="flex items-end gap-1 px-2 h-16">
       <div :if={@checks == []} class="text-body-3 text-text-hint">No data yet.</div>
-      <div :for={check <- Enum.reverse(@checks)} class="flex-1 flex flex-col items-center group">
-        <div
-          class={[
-            "w-full rounded-t",
-            check.status == "up" && "bg-semantic-success/70",
-            check.status != "up" && "bg-semantic-error/70"
-          ]}
-          style={"height: #{bar_height(check)}%"}
-          title={"#{check.status} · #{format_ms(check.latency_ms)} · #{format_iso(check.ran_at)}"}
-        />
-      </div>
+      <div
+        :for={check <- Enum.reverse(@checks)}
+        class={[
+          "flex-1 rounded-t",
+          check.status == "up" && "bg-semantic-success",
+          check.status != "up" && "bg-semantic-error"
+        ]}
+        style={"height: #{bar_height(check)}%"}
+        title={"#{check.status} · #{format_ms(check.latency_ms)} · #{format_iso(check.ran_at)}"}
+      />
     </div>
     """
   end
