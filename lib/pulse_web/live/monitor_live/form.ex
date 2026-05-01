@@ -16,6 +16,7 @@ defmodule PulseWeb.MonitorLive.Form do
           {%Monitor{}, :new, "New monitor"}
       end
 
+    monitor = %{monitor | headers_text: Monitor.format_headers(monitor.headers)}
     changeset = Monitoring.change_monitor(monitor)
 
     {:ok,
@@ -129,6 +130,23 @@ defmodule PulseWeb.MonitorLive.Form do
             placeholder="ok"
           />
         </div>
+
+        <.input
+          field={@form[:headers_text]}
+          type="textarea"
+          label="Request headers (optional)"
+          placeholder={"Authorization: Bearer xxx\nContent-Type: application/json"}
+          rows="3"
+        />
+
+        <.input
+          :if={@form[:method].value == "POST"}
+          field={@form[:body]}
+          type="textarea"
+          label="Request body"
+          placeholder={~s({"ping": true})}
+          rows="4"
+        />
 
         <.input field={@form[:enabled]} type="switch" label="Enabled" />
 

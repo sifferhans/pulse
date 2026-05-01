@@ -24,6 +24,8 @@ defmodule Pulse.Monitoring.Probe do
       Req.new(
         method: String.to_existing_atom(String.downcase(monitor.method)),
         url: monitor.url,
+        headers: monitor.headers || %{},
+        body: probe_body(monitor),
         receive_timeout: monitor.timeout_ms,
         connect_options: [timeout: monitor.timeout_ms],
         finch: Pulse.Monitoring.Finch,
@@ -68,6 +70,11 @@ defmodule Pulse.Monitoring.Probe do
         classify_exception(exception, started_at, ran_at)
     end
   end
+
+  defp probe_body(%Monitor{method: "POST", body: body}) when is_binary(body) and body != "",
+    do: body
+
+  defp probe_body(_), do: nil
 
   defp elapsed_ms(started_at) do
     System.monotonic_time(:millisecond) - started_at
