@@ -169,7 +169,7 @@
         --ds-focus-ring: #000000;
     }
 
-    .dark {
+    [data-theme="dark"] {
         /* Dark theme — only themed tokens are overridden; the fixed
        light/dark text tokens stay the same across both themes. */
         --ds-primary-default: #b3acff;
@@ -272,5 +272,36 @@ body {
     scrollbar-width: none;
     &::-webkit-scrollbar {
         display: none;
+    }
+}
+
+/* Loading spinner — matches DesignLoadingState from bcc-media-play. */
+@utility spinner-rotate {
+    animation: spinner-spin 0.75s linear infinite;
+}
+
+@utility spinner-segment {
+    stroke-dasharray: 62.83;
+    animation: spinner-stretch 1.5s cubic-bezier(0.35, 0, 0.65, 1) infinite;
+}
+
+@keyframes spinner-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes spinner-stretch {
+    0% {
+        stroke-dashoffset: 47.12;
+    }
+    50% {
+        stroke-dashoffset: 15.71;
+    }
+    100% {
+        stroke-dashoffset: 47.12;
     }
 }
