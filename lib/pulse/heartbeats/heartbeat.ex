@@ -13,6 +13,10 @@ defmodule Pulse.Heartbeats.Heartbeat do
     has_many :pings, Pulse.Heartbeats.Ping, preload_order: [desc: :pinged_at]
     has_many :incidents, Pulse.Heartbeats.Incident
 
+    many_to_many :channels, Pulse.Notifications.Channel,
+      join_through: "heartbeat_notification_subscriptions",
+      on_replace: :delete
+
     timestamps(type: :utc_datetime)
   end
 

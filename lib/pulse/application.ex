@@ -26,6 +26,8 @@ defmodule Pulse.Application do
       Pulse.Monitoring.WorkerSupervisor,
       {Task, fn -> sync_monitoring_workers() end},
       heartbeat_detector_spec(),
+      {Task.Supervisor, name: Pulse.Notifications.TaskSupervisor},
+      notification_dispatcher_spec(),
       # Start to serve requests, typically the last entry
       PulseWeb.Endpoint
     ]
@@ -39,6 +41,12 @@ defmodule Pulse.Application do
   defp heartbeat_detector_spec do
     if Application.get_env(:pulse, :start_heartbeat_detector, true) do
       Pulse.Heartbeats.Detector
+    end
+  end
+
+  defp notification_dispatcher_spec do
+    if Application.get_env(:pulse, :start_notification_dispatcher, true) do
+      Pulse.Notifications.Dispatcher
     end
   end
 

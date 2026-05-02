@@ -42,18 +42,41 @@ defmodule Pulse.Monitoring do
   end
 
   def create_monitor(attrs) do
+    channels = fetch_channels(attrs)
+
     %Monitor{}
     |> Monitor.changeset(attrs)
+    |> Ecto.Changeset.put_assoc(:channels, channels)
     |> Repo.insert()
     |> tap_broadcast(:monitor_created)
   end
 
   def update_monitor(%Monitor{} = monitor, attrs) do
+    monitor = Repo.preload(monitor, :channels)
+    channels = fetch_channels(attrs)
+
     monitor
     |> Monitor.changeset(attrs)
+    |> Ecto.Changeset.put_assoc(:channels, channels)
     |> Repo.update()
     |> tap_broadcast(:monitor_updated)
   end
+
+  defp fetch_channels(attrs) do
+    case Map.get(attrs, "channel_ids") || Map.get(attrs, :channel_ids) do
+      nil ->
+        []
+
+      ids when is_list(ids) ->
+        ids
+        |> Enum.reject(&(&1 in [nil, ""]))
+        |> Enum.map(&to_int/1)
+        |> Pulse.Notifications.list_channels_by_ids()
+    end
+  end
+
+  defp to_int(i) when is_integer(i), do: i
+  defp to_int(s) when is_binary(s), do: String.to_integer(s)
 
   def delete_monitor(%Monitor{} = monitor) do
     case Repo.delete(monitor) do

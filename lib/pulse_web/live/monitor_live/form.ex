@@ -1,7 +1,7 @@
 defmodule PulseWeb.MonitorLive.Form do
   use PulseWeb, :live_view
 
-  alias Pulse.Monitoring
+  alias Pulse.{Monitoring, Notifications, Repo}
   alias Pulse.Monitoring.{Monitor, WorkerSupervisor}
 
   @impl true
@@ -9,11 +9,11 @@ defmodule PulseWeb.MonitorLive.Form do
     {monitor, action, page_title} =
       case params do
         %{"id" => id} ->
-          monitor = Monitoring.get_monitor!(id)
+          monitor = Monitoring.get_monitor!(id) |> Repo.preload(:channels)
           {monitor, :edit, "Edit monitor"}
 
         _ ->
-          {%Monitor{}, :new, "New monitor"}
+          {%Monitor{channels: []}, :new, "New monitor"}
       end
 
     monitor = %{monitor | headers_text: Monitor.format_headers(monitor.headers)}
@@ -25,6 +25,8 @@ defmodule PulseWeb.MonitorLive.Form do
      |> assign(:action, action)
      |> assign(:monitor, monitor)
      |> assign(:method_options, Enum.map(Monitor.methods(), &{&1, &1}))
+     |> assign(:channels, Notifications.list_channels())
+     |> assign(:selected_channel_ids, Enum.map(monitor.channels, & &1.id))
      |> assign(:form, to_form(changeset))}
   end
 
@@ -35,12 +37,22 @@ defmodule PulseWeb.MonitorLive.Form do
       |> Monitoring.change_monitor(params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign(socket, :form, to_form(changeset))}
+    {:noreply,
+     socket
+     |> assign(:form, to_form(changeset))
+     |> assign(:selected_channel_ids, parse_channel_ids(params))}
   end
 
-  @impl true
   def handle_event("save", %{"monitor" => params}, socket) do
     save_monitor(socket, socket.assigns.action, params)
+  end
+
+  defp parse_channel_ids(params) do
+    case Map.get(params, "channel_ids") do
+      nil -> []
+      list when is_list(list) -> Enum.map(list, &String.to_integer/1)
+      _ -> []
+    end
   end
 
   defp save_monitor(socket, :new, params) do
@@ -146,6 +158,12 @@ defmodule PulseWeb.MonitorLive.Form do
           label="Request body"
           placeholder={~s({"ping": true})}
           rows="4"
+        />
+
+        <.channel_subscriptions
+          channels={@channels}
+          selected_ids={@selected_channel_ids}
+          form_name={@form.name}
         />
 
         <.input field={@form[:enabled]} type="switch" label="Enabled" />

@@ -924,6 +924,50 @@ defmodule PulseWeb.CoreComponents do
   end
 
   @doc """
+  Renders a checkbox group of notification channels for use inside a form.
+  Posts `<form_name>[channel_ids][]` per checked entry.
+  """
+  attr :channels, :list, required: true
+  attr :selected_ids, :list, required: true
+  attr :form_name, :string, required: true
+
+  def channel_subscriptions(assigns) do
+    ~H"""
+    <div :if={@channels != []}>
+      <div class="text-body-3 font-medium text-text-default">Notify channels</div>
+      <p class="mt-0.5 text-caption-1 text-text-muted">
+        Selected channels receive an alert when an incident opens or recovers.
+      </p>
+      <div class="mt-2 space-y-1.5">
+        <input type="hidden" name={"#{@form_name}[channel_ids][]"} value="" />
+        <label
+          :for={channel <- @channels}
+          class="flex items-center gap-2 text-body-3 text-text-default"
+        >
+          <input
+            type="checkbox"
+            name={"#{@form_name}[channel_ids][]"}
+            value={channel.id}
+            checked={channel.id in @selected_ids}
+            class="size-4 rounded border-border-1"
+          />
+          <span class="font-medium">{channel.name}</span>
+          <span class="text-caption-1 uppercase text-text-muted">{channel.kind}</span>
+          <span :if={!channel.enabled} class="text-caption-1 text-text-hint">(disabled)</span>
+        </label>
+      </div>
+    </div>
+    <div :if={@channels == []} class="rounded-md border border-border-1 bg-surface-indent px-3 py-2">
+      <span class="text-body-3 text-text-muted">
+        No notification channels configured.
+        <.link navigate="/channels/new" class="text-text-default underline">Add one</.link>
+        to start receiving alerts.
+      </span>
+    </div>
+    """
+  end
+
+  @doc """
   A labeled stat card. Renders a small caption above a large value slot.
   """
   attr :label, :string, required: true

@@ -14,6 +14,7 @@ config :pulse, Pulse.Repo,
 # explicitly when needed.
 config :pulse, :start_monitoring_workers, false
 config :pulse, :start_heartbeat_detector, false
+config :pulse, :start_notification_dispatcher, false
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.

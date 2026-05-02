@@ -20,6 +20,10 @@ defmodule Pulse.Monitoring.Monitor do
     has_many :checks, Pulse.Monitoring.Check, preload_order: [desc: :ran_at]
     has_many :incidents, Pulse.Monitoring.Incident
 
+    many_to_many :channels, Pulse.Notifications.Channel,
+      join_through: "monitor_notification_subscriptions",
+      on_replace: :delete
+
     timestamps(type: :utc_datetime)
   end
 

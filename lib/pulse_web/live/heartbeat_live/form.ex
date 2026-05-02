@@ -1,7 +1,7 @@
 defmodule PulseWeb.HeartbeatLive.Form do
   use PulseWeb, :live_view
 
-  alias Pulse.Heartbeats
+  alias Pulse.{Heartbeats, Notifications, Repo}
   alias Pulse.Heartbeats.Heartbeat
 
   @impl true
@@ -9,11 +9,11 @@ defmodule PulseWeb.HeartbeatLive.Form do
     {heartbeat, action, page_title} =
       case params do
         %{"id" => id} ->
-          heartbeat = Heartbeats.get_heartbeat!(id)
+          heartbeat = Heartbeats.get_heartbeat!(id) |> Repo.preload(:channels)
           {heartbeat, :edit, "Edit heartbeat"}
 
         _ ->
-          {%Heartbeat{}, :new, "New heartbeat"}
+          {%Heartbeat{channels: []}, :new, "New heartbeat"}
       end
 
     changeset = Heartbeats.change_heartbeat(heartbeat)
@@ -23,6 +23,8 @@ defmodule PulseWeb.HeartbeatLive.Form do
      |> assign(:page_title, page_title)
      |> assign(:action, action)
      |> assign(:heartbeat, heartbeat)
+     |> assign(:channels, Notifications.list_channels())
+     |> assign(:selected_channel_ids, Enum.map(heartbeat.channels, & &1.id))
      |> assign(:form, to_form(changeset))}
   end
 
@@ -33,12 +35,22 @@ defmodule PulseWeb.HeartbeatLive.Form do
       |> Heartbeats.change_heartbeat(params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign(socket, :form, to_form(changeset))}
+    {:noreply,
+     socket
+     |> assign(:form, to_form(changeset))
+     |> assign(:selected_channel_ids, parse_channel_ids(params))}
   end
 
-  @impl true
   def handle_event("save", %{"heartbeat" => params}, socket) do
     save_heartbeat(socket, socket.assigns.action, params)
+  end
+
+  defp parse_channel_ids(params) do
+    case Map.get(params, "channel_ids") do
+      nil -> []
+      list when is_list(list) -> Enum.map(list, &String.to_integer/1)
+      _ -> []
+    end
   end
 
   defp save_heartbeat(socket, :new, params) do
@@ -103,6 +115,12 @@ defmodule PulseWeb.HeartbeatLive.Form do
             max="3600"
           />
         </div>
+
+        <.channel_subscriptions
+          channels={@channels}
+          selected_ids={@selected_channel_ids}
+          form_name={@form.name}
+        />
 
         <.input field={@form[:enabled]} type="switch" label="Enabled" />
 

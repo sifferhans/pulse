@@ -26,6 +26,10 @@ defmodule PulseWeb.Router do
     live "/heartbeats/new", HeartbeatLive.Form, :new
     live "/heartbeats/:id", HeartbeatLive.Show, :show
     live "/heartbeats/:id/edit", HeartbeatLive.Form, :edit
+
+    live "/channels", ChannelLive.Index, :index
+    live "/channels/new", ChannelLive.Form, :new
+    live "/channels/:id/edit", ChannelLive.Form, :edit
   end
 
   scope "/ping", PulseWeb do

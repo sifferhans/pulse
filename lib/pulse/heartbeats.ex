@@ -43,18 +43,41 @@ defmodule Pulse.Heartbeats do
   end
 
   def create_heartbeat(attrs) do
+    channels = fetch_channels(attrs)
+
     %Heartbeat{}
     |> Heartbeat.changeset(attrs)
+    |> Ecto.Changeset.put_assoc(:channels, channels)
     |> Repo.insert()
     |> tap_broadcast(:heartbeat_created)
   end
 
   def update_heartbeat(%Heartbeat{} = heartbeat, attrs) do
+    heartbeat = Repo.preload(heartbeat, :channels)
+    channels = fetch_channels(attrs)
+
     heartbeat
     |> Heartbeat.changeset(attrs)
+    |> Ecto.Changeset.put_assoc(:channels, channels)
     |> Repo.update()
     |> tap_broadcast(:heartbeat_updated)
   end
+
+  defp fetch_channels(attrs) do
+    case Map.get(attrs, "channel_ids") || Map.get(attrs, :channel_ids) do
+      nil ->
+        []
+
+      ids when is_list(ids) ->
+        ids
+        |> Enum.reject(&(&1 in [nil, ""]))
+        |> Enum.map(&to_int/1)
+        |> Pulse.Notifications.list_channels_by_ids()
+    end
+  end
+
+  defp to_int(i) when is_integer(i), do: i
+  defp to_int(s) when is_binary(s), do: String.to_integer(s)
 
   def delete_heartbeat(%Heartbeat{} = heartbeat) do
     case Repo.delete(heartbeat) do

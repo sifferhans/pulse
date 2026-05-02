@@ -48,6 +48,14 @@ defmodule PulseWeb.Layouts do
         <div class="flex-none">
           <ul class="flex flex-row items-center gap-2">
             <li>
+              <.link
+                navigate={~p"/channels"}
+                class="inline-flex items-center px-3 py-2 rounded-md text-title-3 text-text-default hover:bg-surface-indent"
+              >
+                Channels
+              </.link>
+            </li>
+            <li>
               <.theme_toggle />
             </li>
           </ul>
