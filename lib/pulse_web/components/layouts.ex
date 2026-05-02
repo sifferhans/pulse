@@ -124,7 +124,7 @@ defmodule PulseWeb.Layouts do
   def theme_toggle(assigns) do
     ~H"""
     <div class="relative flex flex-row items-center rounded-full border border-border-1 bg-surface-indent">
-      <div class="absolute w-1/3 h-full rounded-full bg-surface-raise shadow-resting gradient-border left-0 [[data-theme=light]_&]:left-1/3 [[data-theme=dark]_&]:left-2/3 transition-[left]" />
+      <div class="absolute w-1/3 h-full rounded-full bg-surface-raise shadow-resting gradient-border left-0 [[data-theme-pref=light]_&]:left-1/3 [[data-theme-pref=dark]_&]:left-2/3 transition-[left]" />
 
       <button
         class="relative flex p-2 cursor-pointer w-1/3 justify-center text-text-default"
