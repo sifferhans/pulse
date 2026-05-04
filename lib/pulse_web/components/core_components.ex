@@ -825,10 +825,13 @@ defmodule PulseWeb.CoreComponents do
         </span>
       </div>
 
-      <div :if={@entry.kind == :monitor and @entry.latency_points != []} class="flex items-center justify-between gap-3">
-        <span class="text-caption-1 text-text-muted">Latency</span>
-        <.sparkline points={@entry.latency_points} class="w-32" />
-        <span class="text-caption-1 text-text-default">
+      <div
+        :if={@entry.kind == :monitor and @entry.latency_points != []}
+        class="flex items-center gap-3"
+      >
+        <span class="text-caption-1 text-text-muted shrink-0">Latency</span>
+        <.sparkline points={@entry.latency_points} class="flex-1 w-full" />
+        <span class="text-caption-1 text-text-default shrink-0">
           {format_avg_latency(@entry.latency_points)}
         </span>
       </div>
@@ -958,9 +961,10 @@ defmodule PulseWeb.CoreComponents do
             points={@coords}
             fill="none"
             stroke="currentColor"
-            stroke-width="1.5"
+            stroke-width="2"
             stroke-linecap="round"
             stroke-linejoin="round"
+            vector-effect="non-scaling-stroke"
           />
         </svg>
         """
