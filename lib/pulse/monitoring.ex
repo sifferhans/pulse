@@ -165,6 +165,15 @@ defmodule Pulse.Monitoring do
     )
   end
 
+  def list_incidents_since(%Monitor{id: monitor_id}, %DateTime{} = since) do
+    Repo.all(
+      from i in Incident,
+        where: i.monitor_id == ^monitor_id,
+        where: is_nil(i.ended_at) or i.ended_at >= ^since,
+        order_by: [asc: i.started_at]
+    )
+  end
+
   def list_recent_incidents(%Monitor{id: monitor_id}, limit \\ 20) do
     Repo.all(
       from i in Incident,

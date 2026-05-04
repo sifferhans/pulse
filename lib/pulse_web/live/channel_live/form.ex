@@ -9,8 +9,7 @@ defmodule PulseWeb.ChannelLive.Form do
     {channel, action, page_title} =
       case params do
         %{"id" => id} ->
-          {Notifications.get_channel!(id) |> Channel.with_form_fields(), :edit,
-           "Edit channel"}
+          {Notifications.get_channel!(id) |> Channel.with_form_fields(), :edit, "Edit channel"}
 
         _ ->
           {%Channel{kind: "slack"}, :new, "New channel"}

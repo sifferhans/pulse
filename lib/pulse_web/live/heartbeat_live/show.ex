@@ -75,7 +75,9 @@ defmodule PulseWeb.HeartbeatLive.Show do
       <.header>
         {@heartbeat.name}
         <:subtitle>
-          expected every {humanize_seconds(@heartbeat.expected_interval_seconds)} · grace {humanize_seconds(@heartbeat.grace_seconds)}
+          expected every {humanize_seconds(@heartbeat.expected_interval_seconds)} · grace {humanize_seconds(
+            @heartbeat.grace_seconds
+          )}
         </:subtitle>
         <:actions>
           <.button

@@ -179,6 +179,15 @@ defmodule Pulse.Heartbeats do
     )
   end
 
+  def list_incidents_since(%Heartbeat{id: id}, %DateTime{} = since) do
+    Repo.all(
+      from i in Incident,
+        where: i.heartbeat_id == ^id,
+        where: is_nil(i.ended_at) or i.ended_at >= ^since,
+        order_by: [asc: i.started_at]
+    )
+  end
+
   def list_recent_incidents(%Heartbeat{id: id}, limit \\ 20) do
     Repo.all(
       from i in Incident,

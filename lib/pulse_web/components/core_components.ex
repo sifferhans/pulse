@@ -80,8 +80,6 @@ defmodule PulseWeb.CoreComponents do
   @doc """
   Renders a button.
 
-  Ported from `DesignButton.vue` in bcc-media-play.
-
   ## Examples
 
       <.button>Send!</.button>
@@ -95,7 +93,10 @@ defmodule PulseWeb.CoreComponents do
   attr :icon, :string, default: nil, doc: "a heroicon name (e.g. \"hero-plus\")"
   attr :loading, :boolean, default: false
   attr :class, :any, default: nil
-  attr :rest, :global, include: ~w(href navigate patch method download name value disabled type target)
+
+  attr :rest, :global,
+    include: ~w(href navigate patch method download name value disabled type target)
+
   slot :inner_block
 
   def button(%{rest: rest} = assigns) do
@@ -494,8 +495,6 @@ defmodule PulseWeb.CoreComponents do
   Renders an empty/error/info state with an icon, title, description, and
   optional action slot.
 
-  Ported from `DesignViewState.vue` in bcc-media-play.
-
   ## Examples
 
       <.view_state icon="hero-inbox" title="Nothing here yet" />
@@ -537,8 +536,6 @@ defmodule PulseWeb.CoreComponents do
   @doc """
   Renders an empty state. Defaults to an inbox icon and a "nothing here yet"
   title; both are overridable.
-
-  Ported from `DesignEmptyState.vue` in bcc-media-play.
   """
   attr :icon, :string, default: "hero-inbox"
   attr :title, :string, default: nil
@@ -560,8 +557,6 @@ defmodule PulseWeb.CoreComponents do
   @doc """
   Renders an error state. Defaults to an alert icon (in semantic-error) and a
   "something went wrong" title; both are overridable.
-
-  Ported from `DesignErrorState.vue` in bcc-media-play.
   """
   attr :icon, :string, default: "hero-exclamation-circle"
   attr :title, :string, default: nil
@@ -584,7 +579,7 @@ defmodule PulseWeb.CoreComponents do
   @doc """
   Renders an indeterminate loading spinner.
 
-  Ported from `DesignLoadingState.vue` in bcc-media-play. Animations are
+  Animations are
   defined as `spinner-rotate` and `spinner-segment` utilities in `app.css`.
 
   ## Examples
@@ -623,8 +618,7 @@ defmodule PulseWeb.CoreComponents do
   Renders a CSS-only tooltip wrapper. The trigger is the inner block; the
   tooltip content comes from the `:content` slot (or the `content` attr).
 
-  Inspired by `DesignTooltip.vue` in bcc-media-play. The Vue version uses Ark
-  UI's positioner with full collision detection — this Phoenix port uses
+  Uses
   Tailwind classes for one of four placements (`top`/`bottom`/`left`/`right`)
   and shows on hover or focus-within.
 
@@ -686,8 +680,6 @@ defmodule PulseWeb.CoreComponents do
   @doc """
   Renders a small colored pill used to label statuses or counts.
 
-  Ported from `DesignBadge.vue` in bcc-media-admin.
-
   ## Examples
 
       <.badge label="New" />
@@ -727,7 +719,9 @@ defmodule PulseWeb.CoreComponents do
 
   def status_badge(%{status: :up} = assigns), do: ~H|<.badge variant="success" label="Up" />|
   def status_badge(%{status: :down} = assigns), do: ~H|<.badge variant="error" label="Down" />|
-  def status_badge(%{status: :alive} = assigns), do: ~H|<.badge variant="success" label="Alive" />|
+
+  def status_badge(%{status: :alive} = assigns),
+    do: ~H|<.badge variant="success" label="Alive" />|
 
   def status_badge(%{status: :missed} = assigns),
     do: ~H|<.badge variant="error" label="Missed" />|
@@ -739,9 +733,242 @@ defmodule PulseWeb.CoreComponents do
     do: ~H|<.badge variant="neutral" label="Paused" />|
 
   @doc """
-  Renders a full-width tinted notice with an optional icon.
+  Renders the body of a status page (used by both the public page and the
+  admin preview). Takes the map produced by `Pulse.StatusPages.summarize/2`.
+  """
+  attr :summary, :map, required: true
 
-  Ported from `DesignBanner.vue` in bcc-media-admin.
+  def status_summary(assigns) do
+    ~H"""
+    <div class="space-y-8">
+      <div
+        :if={@summary.monitors == [] and @summary.heartbeats == []}
+        class="text-center text-body-3 text-text-muted"
+      >
+        Nothing is currently being tracked on this page.
+      </div>
+
+      <section :if={@summary.monitors != []} class="space-y-3">
+        <h2 class="text-title-3 font-semibold text-text-default">Monitors</h2>
+        <div class="space-y-3">
+          <.summary_card :for={entry <- @summary.monitors} entry={entry} />
+        </div>
+      </section>
+
+      <section :if={@summary.heartbeats != []} class="space-y-3">
+        <h2 class="text-title-3 font-semibold text-text-default">Heartbeats</h2>
+        <div class="space-y-3">
+          <.summary_card :for={entry <- @summary.heartbeats} entry={entry} />
+        </div>
+      </section>
+
+      <section :if={@summary.incidents != []} class="space-y-3">
+        <h2 class="text-title-3 font-semibold text-text-default">Recent incidents</h2>
+        <ul class="divide-y divide-border-1 rounded-xl border border-border-1 bg-surface-default">
+          <li :for={incident <- @summary.incidents} class="flex items-start gap-3 px-4 py-3">
+            <.icon
+              name={
+                if incident.ended_at,
+                  do: "hero-check-circle-mini",
+                  else: "hero-exclamation-triangle-mini"
+              }
+              class={[
+                "size-5 shrink-0 mt-0.5",
+                if(incident.ended_at, do: "text-semantic-success", else: "text-semantic-error")
+              ]}
+            />
+            <div class="min-w-0 flex-1">
+              <div class="text-body-3 text-text-default font-medium">
+                {incident.item_name}
+              </div>
+              <div class="text-caption-1 text-text-muted">
+                {incident_period(incident)} · {incident_duration(incident)}
+              </div>
+              <div :if={incident.note} class="text-caption-1 text-text-hint truncate">
+                {incident.note}
+              </div>
+            </div>
+            <span class="text-caption-1 text-text-muted shrink-0">
+              {incident.kind |> to_string() |> String.capitalize()}
+            </span>
+          </li>
+        </ul>
+      </section>
+    </div>
+    """
+  end
+
+  attr :entry, :map, required: true
+
+  defp summary_card(assigns) do
+    ~H"""
+    <article class="rounded-xl border border-border-1 bg-surface-default p-4 space-y-3">
+      <div class="flex items-center justify-between gap-4">
+        <h3 class="text-body-2 font-medium text-text-default truncate">
+          {@entry.item.name}
+        </h3>
+        <.status_badge status={@entry.status} />
+      </div>
+
+      <div class="space-y-1.5">
+        <.daily_uptime_bar buckets={@entry.daily} />
+        <div class="flex justify-between text-caption-1 text-text-hint">
+          <span>{length(@entry.daily)} days ago</span>
+          <span>today</span>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-caption-1">
+        <span :for={{_key, label, pct} <- @entry.windows} class="text-text-muted">
+          <span class="font-medium text-text-default">{format_percentage(pct)}</span>
+          <span class="text-text-hint">{label}</span>
+        </span>
+      </div>
+
+      <div :if={@entry.kind == :monitor and @entry.latency_points != []} class="flex items-center justify-between gap-3">
+        <span class="text-caption-1 text-text-muted">Latency</span>
+        <.sparkline points={@entry.latency_points} class="w-32" />
+        <span class="text-caption-1 text-text-default">
+          {format_avg_latency(@entry.latency_points)}
+        </span>
+      </div>
+    </article>
+    """
+  end
+
+  defp format_percentage(pct) when is_float(pct) do
+    cond do
+      pct >= 99.995 -> "100%"
+      pct >= 99.0 -> "#{:erlang.float_to_binary(pct, decimals: 2)}%"
+      true -> "#{:erlang.float_to_binary(pct, decimals: 1)}%"
+    end
+  end
+
+  defp format_avg_latency(points) do
+    case Enum.reject(points, &is_nil/1) do
+      [] -> "—"
+      values -> "#{round(Enum.sum(values) / length(values))} ms"
+    end
+  end
+
+  defp incident_period(%{started_at: s, ended_at: nil}), do: "since #{format_short(s)}"
+
+  defp incident_period(%{started_at: s, ended_at: e}),
+    do: "#{format_short(s)} → #{format_short(e)}"
+
+  defp incident_duration(%{started_at: s, ended_at: e}) do
+    finish = e || DateTime.utc_now()
+    seconds = max(DateTime.diff(finish, s, :second), 0)
+
+    cond do
+      seconds < 60 -> "#{seconds}s"
+      seconds < 3_600 -> "#{div(seconds, 60)}m"
+      seconds < 86_400 -> "#{div(seconds, 3_600)}h #{div(rem(seconds, 3_600), 60)}m"
+      true -> "#{div(seconds, 86_400)}d #{div(rem(seconds, 86_400), 3_600)}h"
+    end
+  end
+
+  defp format_short(%DateTime{} = dt) do
+    "#{Calendar.strftime(dt, "%b %d %H:%M")} UTC"
+  end
+
+  @doc """
+  Renders a horizontal bar of small daily-status segments. `buckets` is a list
+  of `{date, status}` tuples (oldest → newest) where status is one of
+  `:up | :partial | :down | :no_data`. Each segment carries a `title` so users
+  can hover for the date and outcome.
+  """
+  attr :buckets, :list, required: true
+  attr :class, :any, default: nil
+
+  def daily_uptime_bar(assigns) do
+    ~H"""
+    <div class={["flex items-stretch gap-px h-7", @class]}>
+      <span
+        :for={{date, status} <- @buckets}
+        class={["flex-1 min-w-px rounded-sm", daily_bucket_class(status)]}
+        title={"#{Date.to_iso8601(date)} · #{daily_bucket_label(status)}"}
+      />
+    </div>
+    """
+  end
+
+  defp daily_bucket_class(:up), do: "bg-semantic-success"
+  defp daily_bucket_class(:partial), do: "bg-semantic-warning"
+  defp daily_bucket_class(:down), do: "bg-semantic-error"
+  defp daily_bucket_class(:no_data), do: "bg-surface-indent"
+
+  defp daily_bucket_label(:up), do: "operational"
+  defp daily_bucket_label(:partial), do: "partial outage"
+  defp daily_bucket_label(:down), do: "outage"
+  defp daily_bucket_label(:no_data), do: "no data"
+
+  @doc """
+  Renders a small inline SVG sparkline. `points` is a list of numbers
+  (oldest → newest); `nil` entries are skipped.
+  """
+  attr :points, :list, required: true
+  attr :width, :integer, default: 120
+  attr :height, :integer, default: 28
+  attr :class, :any, default: nil
+
+  def sparkline(assigns) do
+    values = Enum.reject(assigns.points, &is_nil/1)
+
+    cond do
+      length(values) < 2 ->
+        assigns = assign(assigns, :class, assigns.class)
+
+        ~H"""
+        <span class={["text-caption-1 text-text-hint", @class]}>—</span>
+        """
+
+      true ->
+        {min_v, max_v} = Enum.min_max(values)
+        range = max(max_v - min_v, 1)
+        n = length(values) - 1
+        w = assigns.width
+        h = assigns.height
+        pad = 2
+
+        coords =
+          values
+          |> Enum.with_index()
+          |> Enum.map_join(" ", fn {v, i} ->
+            x = pad + i * (w - 2 * pad) / n
+            y = h - pad - (v - min_v) / range * (h - 2 * pad)
+            "#{Float.round(x, 2)},#{Float.round(y * 1.0, 2)}"
+          end)
+
+        assigns =
+          assigns
+          |> assign(:coords, coords)
+          |> assign(:viewbox, "0 0 #{w} #{h}")
+
+        ~H"""
+        <svg
+          viewBox={@viewbox}
+          width={@width}
+          height={@height}
+          class={["text-primary-contrast", @class]}
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <polyline
+            points={@coords}
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        """
+    end
+  end
+
+  @doc """
+  Renders a full-width tinted notice with an optional icon.
 
   ## Examples
 
@@ -784,8 +1011,7 @@ defmodule PulseWeb.CoreComponents do
   Renders a circular avatar showing an image when `src` is given, otherwise
   the initials of `name`.
 
-  Ported from `DesignAvatar.vue` in bcc-media-admin. The Vue version uses Ark
-  Avatar to fall back to initials if the image fails to load; this port shows
+  Shows
   the image when `src` is set and otherwise the initials — there is no
   on-error fallback.
 
@@ -848,7 +1074,7 @@ defmodule PulseWeb.CoreComponents do
   @doc """
   Renders a toggle switch.
 
-  Ported from `DesignSwitch.vue` in bcc-media-admin. Implemented as a styled
+  Implemented as a styled
   checkbox — the visual track and thumb react to `:checked` via the
   `group-has-checked:` Tailwind modifier.
 
@@ -896,7 +1122,7 @@ defmodule PulseWeb.CoreComponents do
   Renders a card-bordered table with column headers and an optional empty-state
   message. Use this for static-shape tables where you control the row markup.
 
-  Ported from `DesignTable.vue` in bcc-media-admin. For Phoenix-style streamed
+  For Phoenix-style streamed
   tables with per-row click handling and action columns, use `table/1`.
 
   ## Examples

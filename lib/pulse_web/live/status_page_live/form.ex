@@ -50,9 +50,14 @@ defmodule PulseWeb.StatusPageLive.Form do
 
   defp parse_ids(params, key) do
     case Map.get(params, key) do
-      nil -> []
-      list when is_list(list) -> list |> Enum.reject(&(&1 == "")) |> Enum.map(&String.to_integer/1)
-      _ -> []
+      nil ->
+        []
+
+      list when is_list(list) ->
+        list |> Enum.reject(&(&1 == "")) |> Enum.map(&String.to_integer/1)
+
+      _ ->
+        []
     end
   end
 

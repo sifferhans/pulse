@@ -14,8 +14,7 @@ defmodule Pulse.Repo.Migrations.CreateNotificationTables do
     create table(:monitor_notification_subscriptions) do
       add :monitor_id, references(:monitors, on_delete: :delete_all), null: false
 
-      add :channel_id, references(:notification_channels, on_delete: :delete_all),
-        null: false
+      add :channel_id, references(:notification_channels, on_delete: :delete_all), null: false
 
       timestamps(type: :utc_datetime)
     end
@@ -25,8 +24,7 @@ defmodule Pulse.Repo.Migrations.CreateNotificationTables do
     create table(:heartbeat_notification_subscriptions) do
       add :heartbeat_id, references(:heartbeats, on_delete: :delete_all), null: false
 
-      add :channel_id, references(:notification_channels, on_delete: :delete_all),
-        null: false
+      add :channel_id, references(:notification_channels, on_delete: :delete_all), null: false
 
       timestamps(type: :utc_datetime)
     end

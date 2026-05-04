@@ -44,7 +44,12 @@ defmodule PulseWeb.StatusPageLive.Index do
           Public, slug-addressable views that show the current status of selected monitors and heartbeats.
         </:subtitle>
         <:actions>
-          <.button :if={@pages != []} navigate={~p"/status-pages/new"} icon="hero-plus" label="New status page" />
+          <.button
+            :if={@pages != []}
+            navigate={~p"/status-pages/new"}
+            icon="hero-plus"
+            label="New status page"
+          />
         </:actions>
       </.header>
 
@@ -77,7 +82,9 @@ defmodule PulseWeb.StatusPageLive.Index do
             </.link>
           </td>
           <td class="px-4 py-2.5 align-middle text-body-3 text-text-muted">
-            {length(page.monitors)} monitor{plural(page.monitors)} · {length(page.heartbeats)} heartbeat{plural(page.heartbeats)}
+            {length(page.monitors)} monitor{plural(page.monitors)} · {length(page.heartbeats)} heartbeat{plural(
+              page.heartbeats
+            )}
           </td>
           <td class="px-4 py-2.5 align-middle">
             <.badge
