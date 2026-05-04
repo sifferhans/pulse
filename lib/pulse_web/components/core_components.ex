@@ -938,29 +938,35 @@ defmodule PulseWeb.CoreComponents do
       <p class="mt-0.5 text-caption-1 text-text-muted">
         Selected channels receive an alert when an incident opens or recovers.
       </p>
-      <div class="mt-2 space-y-1.5">
+      <div class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
         <input type="hidden" name={"#{@form_name}[channel_ids][]"} value="" />
         <label
           :for={channel <- @channels}
-          class="flex items-center gap-2 text-body-3 text-text-default"
+          class="group flex cursor-pointer items-center gap-3 rounded-lg border border-border-1 bg-surface-default px-3 py-2.5 transition-colors hover:bg-surface-indent has-checked:border-primary-contrast has-checked:bg-primary-contrast/5"
         >
           <input
             type="checkbox"
             name={"#{@form_name}[channel_ids][]"}
             value={channel.id}
             checked={channel.id in @selected_ids}
-            class="size-4 rounded border-border-1"
+            class="size-4 shrink-0 rounded border-border-1 accent-primary-contrast"
           />
-          <span class="font-medium">{channel.name}</span>
-          <span class="text-caption-1 uppercase text-text-muted">{channel.kind}</span>
-          <span :if={!channel.enabled} class="text-caption-1 text-text-hint">(disabled)</span>
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-2">
+              <span class="truncate text-body-3 font-medium text-text-default">
+                {channel.name}
+              </span>
+              <span :if={!channel.enabled} class="text-caption-1 text-text-hint">(disabled)</span>
+            </div>
+          </div>
+          <.badge variant="neutral" class="uppercase shrink-0">{channel.kind}</.badge>
         </label>
       </div>
     </div>
     <div :if={@channels == []} class="rounded-md border border-border-1 bg-surface-indent px-3 py-2">
       <span class="text-body-3 text-text-muted">
         No notification channels configured.
-        <.link navigate="/channels/new" class="text-text-default underline">Add one</.link>
+        <.link navigate="/alerting/channels/new" class="text-text-default underline">Add one</.link>
         to start receiving alerts.
       </span>
     </div>

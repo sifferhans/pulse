@@ -185,7 +185,7 @@ defmodule PulseWeb.OverviewLive.Index do
               {format_time(c && c.ran_at)}
             </td>
             <td class="px-4 py-2.5 align-middle">
-              <div class="flex items-center justify-end gap-2">
+              <div class="flex items-center justify-end">
                 <.button
                   variant="tertiary"
                   size="small"
@@ -263,7 +263,7 @@ defmodule PulseWeb.OverviewLive.Index do
               {format_time(h.last_pinged_at)}
             </td>
             <td class="px-4 py-2.5 align-middle">
-              <div class="flex items-center justify-end gap-2">
+              <div class="flex items-center justify-end">
                 <.button
                   variant="tertiary"
                   size="small"

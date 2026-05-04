@@ -48,7 +48,7 @@ defmodule PulseWeb.ChannelLive.Form do
         {:noreply,
          socket
          |> put_flash(:info, "Channel created")
-         |> push_navigate(to: ~p"/channels")}
+         |> push_navigate(to: ~p"/alerting")}
 
       {:error, changeset} ->
         {:noreply, assign(socket, :form, to_form(changeset))}
@@ -61,7 +61,7 @@ defmodule PulseWeb.ChannelLive.Form do
         {:noreply,
          socket
          |> put_flash(:info, "Channel updated")
-         |> push_navigate(to: ~p"/channels")}
+         |> push_navigate(to: ~p"/alerting")}
 
       {:error, changeset} ->
         {:noreply, assign(socket, :form, to_form(changeset))}
@@ -120,7 +120,7 @@ defmodule PulseWeb.ChannelLive.Form do
         <.input field={@form[:enabled]} type="switch" label="Enabled" />
 
         <div class="flex items-center justify-end gap-2 pt-2">
-          <.button variant="secondary" navigate={~p"/channels"} label="Cancel" />
+          <.button variant="secondary" navigate={~p"/alerting"} label="Cancel" />
           <.button type="submit" label="Save channel" />
         </div>
       </.form>

@@ -49,9 +49,16 @@ defmodule PulseWeb.MonitorLive.Form do
 
   defp parse_channel_ids(params) do
     case Map.get(params, "channel_ids") do
-      nil -> []
-      list when is_list(list) -> Enum.map(list, &String.to_integer/1)
-      _ -> []
+      nil ->
+        []
+
+      list when is_list(list) ->
+        list
+        |> Enum.reject(&(&1 == ""))
+        |> Enum.map(&String.to_integer/1)
+
+      _ ->
+        []
     end
   end
 

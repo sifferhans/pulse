@@ -9,7 +9,7 @@ defmodule PulseWeb.ChannelLive.Index do
 
     {:ok,
      socket
-     |> assign(:page_title, "Notification channels")
+     |> assign(:page_title, "Alerting")
      |> load_channels()}
   end
 
@@ -39,64 +39,78 @@ defmodule PulseWeb.ChannelLive.Index do
     ~H"""
     <Layouts.app flash={@flash}>
       <.header>
-        Notification channels
+        Alerting
         <:subtitle>
-          Webhook destinations that receive incident alerts. Attach them to monitors and heartbeats from their edit pages.
+          Configure how Pulse notifies you when incidents open or recover.
         </:subtitle>
-        <:actions>
-          <.button navigate={~p"/channels/new"} icon="hero-plus" label="New channel" />
-        </:actions>
       </.header>
 
-      <div :if={@channels == []} class="rounded-xl border border-border-1 bg-surface-default py-16">
-        <.empty_state
-          icon="hero-bell"
-          title="No channels yet"
-          description="Add a Slack, Discord, or Telegram destination to start receiving alerts."
-        >
-          <:action>
-            <.button navigate={~p"/channels/new"} icon="hero-plus" label="New channel" />
-          </:action>
-        </.empty_state>
-      </div>
+      <section class="space-y-3">
+        <div class="flex items-end justify-between gap-4">
+          <div>
+            <h2 class="text-title-3 font-semibold text-text-default">Notification channels</h2>
+            <p class="text-caption-1 text-text-muted">
+              Webhook destinations that receive incident alerts. Attach them to monitors and heartbeats from their edit pages.
+            </p>
+          </div>
+          <.button
+            :if={@channels != []}
+            navigate={~p"/alerting/channels/new"}
+            icon="hero-plus"
+            label="New channel"
+          />
+        </div>
 
-      <.simple_table :if={@channels != []} columns={["Kind", "Name", "Status", ""]}>
-        <tr
-          :for={channel <- @channels}
-          id={"channel-#{channel.id}"}
-          class="border-t border-border-1"
-        >
-          <td class="px-4 py-2.5 align-middle text-body-3 text-text-muted uppercase">
-            {channel.kind}
-          </td>
-          <td class="px-4 py-2.5 align-middle text-body-3 text-text-default font-medium">
-            {channel.name}
-          </td>
-          <td class="px-4 py-2.5 align-middle">
-            <.badge
-              variant={if channel.enabled, do: "success", else: "neutral"}
-              label={if channel.enabled, do: "Enabled", else: "Disabled"}
-            />
-          </td>
-          <td class="px-4 py-2.5 align-middle">
-            <div class="flex items-center justify-end gap-2">
-              <.button
-                variant="tertiary"
-                size="small"
-                icon="hero-pencil-square-mini"
-                navigate={~p"/channels/#{channel.id}/edit"}
+        <div :if={@channels == []} class="rounded-xl border border-border-1 bg-surface-default py-16">
+          <.empty_state
+            icon="hero-bell"
+            title="No channels yet"
+            description="Add a Slack, Discord, or Telegram destination to start receiving alerts."
+          >
+            <:action>
+              <.button navigate={~p"/alerting/channels/new"} icon="hero-plus" label="New channel" />
+            </:action>
+          </.empty_state>
+        </div>
+
+        <.simple_table :if={@channels != []} columns={["Kind", "Name", "Status", ""]}>
+          <tr
+            :for={channel <- @channels}
+            id={"channel-#{channel.id}"}
+            class="border-t border-border-1"
+          >
+            <td class="px-4 py-2.5 align-middle text-body-3 text-text-muted uppercase">
+              {channel.kind}
+            </td>
+            <td class="px-4 py-2.5 align-middle text-body-3 text-text-default font-medium">
+              {channel.name}
+            </td>
+            <td class="px-4 py-2.5 align-middle">
+              <.badge
+                variant={if channel.enabled, do: "success", else: "neutral"}
+                label={if channel.enabled, do: "Enabled", else: "Disabled"}
               />
-              <.button
-                variant="tertiary"
-                size="small"
-                icon="hero-trash-mini"
-                phx-click={JS.push("delete", value: %{id: channel.id})}
-                data-confirm={"Delete channel #{channel.name}?"}
-              />
-            </div>
-          </td>
-        </tr>
-      </.simple_table>
+            </td>
+            <td class="px-4 py-2.5 align-middle">
+              <div class="flex items-center justify-end gap-2">
+                <.button
+                  variant="tertiary"
+                  size="small"
+                  icon="hero-pencil-square-mini"
+                  navigate={~p"/alerting/channels/#{channel.id}/edit"}
+                />
+                <.button
+                  variant="tertiary"
+                  size="small"
+                  icon="hero-trash-mini"
+                  phx-click={JS.push("delete", value: %{id: channel.id})}
+                  data-confirm={"Delete channel #{channel.name}?"}
+                />
+              </div>
+            </td>
+          </tr>
+        </.simple_table>
+      </section>
     </Layouts.app>
     """
   end
