@@ -118,18 +118,10 @@ defmodule Pulse.StatusPages do
   @history_days 90
   @incident_limit 20
 
-  @uptime_windows [
-    {:day, 86_400, "24h"},
-    {:week, 7 * 86_400, "7d"},
-    {:month, 30 * 86_400, "30d"},
-    {:quarter, 90 * 86_400, "90d"}
-  ]
-
-  def uptime_windows, do: @uptime_windows
-
   @doc """
   Builds everything needed to render a status page: current status per item,
-  90-day daily uptime bars, uptime windows, and a combined incident timeline.
+  90-day daily uptime bars, the 90-day uptime percentage, and a combined
+  incident timeline.
 
   Pure on top of the contexts — safe to call from a LiveView.
   """
@@ -149,7 +141,7 @@ defmodule Pulse.StatusPages do
           item: monitor,
           status: Status.monitor_status(monitor, Map.get(latest_checks, monitor.id)),
           daily: Status.daily_uptime(monitor, incidents, @history_days, now),
-          windows: window_uptimes(monitor, incidents, now),
+          uptime_90d: uptime_90d(monitor, incidents, now),
           incidents: incidents
         }
       end)
@@ -165,7 +157,7 @@ defmodule Pulse.StatusPages do
           item: heartbeat,
           status: public_status(status),
           daily: Status.daily_uptime(heartbeat, incidents, @history_days, now),
-          windows: window_uptimes(heartbeat, incidents, now),
+          uptime_90d: uptime_90d(heartbeat, incidents, now),
           incidents: incidents
         }
       end)
@@ -196,15 +188,12 @@ defmodule Pulse.StatusPages do
   defp public_status(:missed), do: :down
   defp public_status(other), do: other
 
-  defp window_uptimes(item, incidents, now) do
-    Enum.map(@uptime_windows, fn {key, seconds, label} ->
-      window_start =
-        item.inserted_at
-        |> max_dt(DateTime.add(now, -seconds, :second))
+  defp uptime_90d(item, incidents, now) do
+    window_start =
+      item.inserted_at
+      |> max_dt(DateTime.add(now, -@history_days * 86_400, :second))
 
-      pct = Status.uptime_percentage(incidents, window_start, now)
-      {key, label, pct}
-    end)
+    Status.uptime_percentage(incidents, window_start, now)
   end
 
   defp max_dt(a, b), do: if(DateTime.compare(a, b) == :gt, do: a, else: b)

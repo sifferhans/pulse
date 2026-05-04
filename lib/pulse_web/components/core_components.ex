@@ -805,11 +805,9 @@ defmodule PulseWeb.CoreComponents do
         </div>
       </div>
 
-      <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-caption-1">
-        <span :for={{_key, label, pct} <- @entry.windows} class="text-text-muted">
-          <span class="font-medium text-text-default">{format_percentage(pct)}</span>
-          <span class="text-text-hint">{label}</span>
-        </span>
+      <div class="text-caption-1 text-text-muted">
+        <span class="font-medium text-text-default">{format_percentage(@entry.uptime_90d)}</span>
+        <span class="text-text-hint">uptime over the last 90 days</span>
       </div>
     </article>
     """
