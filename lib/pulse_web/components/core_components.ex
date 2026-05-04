@@ -95,7 +95,7 @@ defmodule PulseWeb.CoreComponents do
   attr :icon, :string, default: nil, doc: "a heroicon name (e.g. \"hero-plus\")"
   attr :loading, :boolean, default: false
   attr :class, :any, default: nil
-  attr :rest, :global, include: ~w(href navigate patch method download name value disabled type)
+  attr :rest, :global, include: ~w(href navigate patch method download name value disabled type target)
   slot :inner_block
 
   def button(%{rest: rest} = assigns) do
@@ -719,6 +719,24 @@ defmodule PulseWeb.CoreComponents do
   defp badge_variant("info"), do: "bg-semantic-info/15 text-semantic-info"
   defp badge_variant("error"), do: "bg-semantic-error/15 text-semantic-error"
   defp badge_variant("neutral"), do: "bg-surface-indent text-text-muted"
+
+  @doc """
+  Renders a status atom (from `Pulse.Status`) as a colored badge.
+  """
+  attr :status, :atom, required: true
+
+  def status_badge(%{status: :up} = assigns), do: ~H|<.badge variant="success" label="Up" />|
+  def status_badge(%{status: :down} = assigns), do: ~H|<.badge variant="error" label="Down" />|
+  def status_badge(%{status: :alive} = assigns), do: ~H|<.badge variant="success" label="Alive" />|
+
+  def status_badge(%{status: :missed} = assigns),
+    do: ~H|<.badge variant="error" label="Missed" />|
+
+  def status_badge(%{status: :pending} = assigns),
+    do: ~H|<.badge variant="neutral" label="Pending" />|
+
+  def status_badge(%{status: :paused} = assigns),
+    do: ~H|<.badge variant="neutral" label="Paused" />|
 
   @doc """
   Renders a full-width tinted notice with an optional icon.

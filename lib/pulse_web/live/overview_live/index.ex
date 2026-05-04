@@ -1,8 +1,7 @@
 defmodule PulseWeb.OverviewLive.Index do
   use PulseWeb, :live_view
 
-  alias Pulse.{Heartbeats, Monitoring}
-  alias Pulse.Heartbeats.Heartbeat
+  alias Pulse.{Heartbeats, Monitoring, Status}
   alias Pulse.Monitoring.Check
 
   @impl true
@@ -90,7 +89,7 @@ defmodule PulseWeb.OverviewLive.Index do
         %{
           heartbeat: heartbeat,
           open_incident: open,
-          status: heartbeat_status(heartbeat, open)
+          status: Status.heartbeat_status(heartbeat, open)
         }
       end)
 
@@ -114,11 +113,6 @@ defmodule PulseWeb.OverviewLive.Index do
 
   defp count_check_by_status(rows, status) when is_binary(status),
     do: count_check_by_status(rows, [status])
-
-  defp heartbeat_status(%Heartbeat{enabled: false}, _), do: :paused
-  defp heartbeat_status(%Heartbeat{}, %{} = _open), do: :missed
-  defp heartbeat_status(%Heartbeat{last_pinged_at: nil}, _), do: :pending
-  defp heartbeat_status(%Heartbeat{}, _), do: :alive
 
   @impl true
   def render(assigns) do
@@ -160,12 +154,12 @@ defmodule PulseWeb.OverviewLive.Index do
           columns={["Status", "Name", "URL", "Latency", "Last check", ""]}
         >
           <tr
-            :for={%{monitor: m, latest_check: c, open_incident: incident} <- @monitor_rows}
+            :for={%{monitor: m, latest_check: c} <- @monitor_rows}
             id={"monitor-#{m.id}"}
             class="border-t border-border-1"
           >
-            <td class="px-4 py-2.5 align-middle">
-              <.monitor_status_badge check={c} incident={incident} enabled={m.enabled} />
+            <td class="px-4 py-2.5 align-middle w-24">
+              <.status_badge status={Status.monitor_status(m, c)} />
             </td>
             <td class="px-4 py-2.5 align-middle text-body-3 text-text-default">
               <.link navigate={~p"/monitors/#{m.id}"} class="font-medium hover:underline">
@@ -245,8 +239,8 @@ defmodule PulseWeb.OverviewLive.Index do
             id={"heartbeat-#{h.id}"}
             class="border-t border-border-1"
           >
-            <td class="px-4 py-2.5 align-middle">
-              <.heartbeat_status_badge status={status} />
+            <td class="px-4 py-2.5 align-middle w-24">
+              <.status_badge status={status} />
             </td>
             <td class="px-4 py-2.5 align-middle text-body-3 text-text-default">
               <.link navigate={~p"/heartbeats/#{h.id}"} class="font-medium hover:underline">
@@ -285,49 +279,6 @@ defmodule PulseWeb.OverviewLive.Index do
     </Layouts.app>
     """
   end
-
-  attr :check, Check, default: nil
-  attr :incident, :any, default: nil
-  attr :enabled, :boolean, default: true
-
-  defp monitor_status_badge(%{enabled: false} = assigns),
-    do: ~H|<.badge variant="neutral" label="Paused" />|
-
-  defp monitor_status_badge(%{check: nil} = assigns),
-    do: ~H|<.badge variant="neutral" label="Pending" />|
-
-  defp monitor_status_badge(%{check: %Check{status: "up"}} = assigns),
-    do: ~H|<.badge variant="success" label="Up" />|
-
-  defp monitor_status_badge(%{check: %Check{status: status}} = assigns)
-       when status in ["down", "timeout", "error"] do
-    label =
-      case status do
-        "down" -> "Down"
-        "timeout" -> "Timeout"
-        "error" -> "Error"
-      end
-
-    assigns = assign(assigns, :label, label)
-
-    ~H"""
-    <.badge variant="error" label={@label} />
-    """
-  end
-
-  attr :status, :atom, required: true
-
-  defp heartbeat_status_badge(%{status: :alive} = assigns),
-    do: ~H|<.badge variant="success" label="Alive" />|
-
-  defp heartbeat_status_badge(%{status: :missed} = assigns),
-    do: ~H|<.badge variant="error" label="Missed" />|
-
-  defp heartbeat_status_badge(%{status: :pending} = assigns),
-    do: ~H|<.badge variant="neutral" label="Pending" />|
-
-  defp heartbeat_status_badge(%{status: :paused} = assigns),
-    do: ~H|<.badge variant="neutral" label="Paused" />|
 
   defp format_latency(%Check{latency_ms: ms}) when is_integer(ms), do: "#{ms} ms"
   defp format_latency(_), do: "—"

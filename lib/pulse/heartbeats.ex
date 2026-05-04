@@ -35,6 +35,12 @@ defmodule Pulse.Heartbeats do
 
   def get_heartbeat!(id), do: Repo.get!(Heartbeat, id)
 
+  def list_heartbeats_by_ids([]), do: []
+
+  def list_heartbeats_by_ids(ids) do
+    Repo.all(from h in Heartbeat, where: h.id in ^ids)
+  end
+
   def get_heartbeat_by_slug(slug) when is_binary(slug),
     do: Repo.get_by(Heartbeat, slug: slug)
 

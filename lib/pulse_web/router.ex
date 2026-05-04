@@ -30,6 +30,13 @@ defmodule PulseWeb.Router do
     live "/alerting", ChannelLive.Index, :index
     live "/alerting/channels/new", ChannelLive.Form, :new
     live "/alerting/channels/:id/edit", ChannelLive.Form, :edit
+
+    live "/status-pages", StatusPageLive.Index, :index
+    live "/status-pages/new", StatusPageLive.Form, :new
+    live "/status-pages/:id", StatusPageLive.Show, :show
+    live "/status-pages/:id/edit", StatusPageLive.Form, :edit
+
+    live "/status/:slug", PublicStatusLive.Show, :show
   end
 
   scope "/ping", PulseWeb do

@@ -37,6 +37,12 @@ defmodule Pulse.Monitoring do
 
   def get_monitor!(id), do: Repo.get!(Monitor, id)
 
+  def list_monitors_by_ids([]), do: []
+
+  def list_monitors_by_ids(ids) do
+    Repo.all(from m in Monitor, where: m.id in ^ids)
+  end
+
   def change_monitor(%Monitor{} = monitor, attrs \\ %{}) do
     Monitor.changeset(monitor, attrs)
   end

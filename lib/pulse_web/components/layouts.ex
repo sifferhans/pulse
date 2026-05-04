@@ -47,6 +47,14 @@ defmodule PulseWeb.Layouts do
           <ul class="flex flex-row items-center gap-2">
             <li>
               <.link
+                navigate={~p"/status-pages"}
+                class="inline-flex items-center px-3 py-2 rounded-md text-title-3 text-text-default hover:bg-surface-indent"
+              >
+                Status pages
+              </.link>
+            </li>
+            <li>
+              <.link
                 navigate={~p"/alerting"}
                 class="inline-flex items-center px-3 py-2 rounded-md text-title-3 text-text-default hover:bg-surface-indent"
               >
@@ -64,6 +72,37 @@ defmodule PulseWeb.Layouts do
     <main class="px-4 py-10 sm:px-6 lg:px-8">
       <div class="mx-auto max-w-5xl space-y-10">
         {render_slot(@inner_block)}
+      </div>
+    </main>
+
+    <.flash_group flash={@flash} />
+    """
+  end
+
+  @doc """
+  Renders a minimal layout for public, unauthenticated pages — no admin nav,
+  small "Powered by Pulse" footer.
+  """
+  attr :flash, :map, required: true
+  slot :inner_block, required: true
+
+  def public(assigns) do
+    ~H"""
+    <main class="min-h-screen px-4 py-10 sm:px-6 lg:px-8 flex flex-col">
+      <div class="mx-auto max-w-3xl space-y-8 w-full grow flex flex-col">
+        {render_slot(@inner_block)}
+
+        <footer class="pt-8 text-center text-caption-1 text-text-hint mt-auto">
+          <.link
+            navigate={~p"/"}
+            class="inline-flex items-center gap-1 hover:text-text-muted italic"
+          >
+            <span>Powered by</span>
+            <span class="flex items-center gap-0.5">
+              <.icon name="hero-bolt-mini" class="size-3 text-primary-contrast" /> Pulse
+            </span>
+          </.link>
+        </footer>
       </div>
     </main>
 

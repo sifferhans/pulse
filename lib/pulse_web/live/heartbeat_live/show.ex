@@ -185,19 +185,6 @@ defmodule PulseWeb.HeartbeatLive.Show do
     """
   end
 
-  attr :status, :atom, required: true
-
-  defp status_badge(%{status: :alive} = assigns), do: ~H|<.badge variant="success" label="Alive" />|
-
-  defp status_badge(%{status: :missed} = assigns),
-    do: ~H|<.badge variant="error" label="Missed" />|
-
-  defp status_badge(%{status: :pending} = assigns),
-    do: ~H|<.badge variant="neutral" label="Pending" />|
-
-  defp status_badge(%{status: :paused} = assigns),
-    do: ~H|<.badge variant="neutral" label="Paused" />|
-
   defp ping_meta(ping) do
     [ping.source_ip, ping.user_agent]
     |> Enum.reject(&(&1 == nil or &1 == ""))
