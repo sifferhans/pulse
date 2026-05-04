@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   precommit:
-    name: Compile, format, credo, test
+    name: Compile, format, credo, dialyzer, test
     runs-on: ubuntu-latest
 
     env:
@@ -20,7 +20,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: erlef/setup-beam@v1
+      - id: beam
+        uses: erlef/setup-beam@v1
         with:
           version-file: .tool-versions
           version-type: strict
@@ -29,15 +30,26 @@ jobs:
         uses: actions/cache@v4
         with:
           path: deps
-          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
-          restore-keys: ${{ runner.os }}-mix-
+          key: ${{ runner.os }}-otp${{ steps.beam.outputs.otp-version }}-elixir${{ steps.beam.outputs.elixir-version }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: ${{ runner.os }}-otp${{ steps.beam.outputs.otp-version }}-elixir${{ steps.beam.outputs.elixir-version }}-mix-
 
       - name: Cache _build
         uses: actions/cache@v4
         with:
           path: _build
-          key: ${{ runner.os }}-build-${{ hashFiles('**/mix.lock') }}
-          restore-keys: ${{ runner.os }}-build-
+          key: ${{ runner.os }}-otp${{ steps.beam.outputs.otp-version }}-elixir${{ steps.beam.outputs.elixir-version }}-build-${{ hashFiles('**/mix.lock') }}
+          restore-keys: ${{ runner.os }}-otp${{ steps.beam.outputs.otp-version }}-elixir${{ steps.beam.outputs.elixir-version }}-build-
+
+      # Cached separately from `_build` so a mix.lock change doesn't force a
+      # full PLT rebuild — dialyxir incrementally updates the restored PLT.
+      - name: Cache dialyzer PLT
+        uses: actions/cache@v4
+        with:
+          path: |
+            _build/test/dialyxir_*.plt
+            _build/test/dialyxir_*.plt.hash
+          key: ${{ runner.os }}-otp${{ steps.beam.outputs.otp-version }}-elixir${{ steps.beam.outputs.elixir-version }}-plt-${{ hashFiles('**/mix.lock') }}
+          restore-keys: ${{ runner.os }}-otp${{ steps.beam.outputs.otp-version }}-elixir${{ steps.beam.outputs.elixir-version }}-plt-
 
       - run: mix deps.get
       - run: mix precommit

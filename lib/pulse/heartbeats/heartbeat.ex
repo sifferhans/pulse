@@ -2,6 +2,8 @@ defmodule Pulse.Heartbeats.Heartbeat do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @type t :: %__MODULE__{}
+
   schema "heartbeats" do
     field :name, :string
     field :slug, :string

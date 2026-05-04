@@ -4,6 +4,8 @@ defmodule Pulse.Monitoring.Monitor do
 
   @methods ~w(GET POST HEAD)
 
+  @type t :: %__MODULE__{}
+
   schema "monitors" do
     field :name, :string
     field :url, :string

@@ -4,6 +4,8 @@ defmodule Pulse.Monitoring.Check do
 
   @statuses ~w(up down timeout error)
 
+  @type t :: %__MODULE__{}
+
   schema "checks" do
     field :status, :string
     field :latency_ms, :integer

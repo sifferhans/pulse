@@ -12,7 +12,16 @@ defmodule Pulse.MixProject do
       deps: deps(),
       compilers: [:phoenix_live_view] ++ Mix.compilers(),
       listeners: [Phoenix.CodeReloader],
-      usage_rules: usage_rules()
+      usage_rules: usage_rules(),
+      dialyzer: dialyzer()
+    ]
+  end
+
+  defp dialyzer do
+    [
+      # `test/support/*` is in the test elixirc_paths, so dialyzer needs ExUnit
+      # in the PLT to resolve the macros it generates.
+      plt_add_apps: [:ex_unit, :mix]
     ]
   end
 
@@ -41,6 +50,7 @@ defmodule Pulse.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:phoenix_test, "~> 0.11.1", only: :test},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:usage_rules, "~> 1.0", only: [:dev]},
@@ -97,6 +107,7 @@ defmodule Pulse.MixProject do
         "deps.unlock --unused",
         "format",
         "credo",
+        "dialyzer",
         "test"
       ]
     ]
