@@ -1,5 +1,5 @@
 defmodule PulseWeb.LiveAuthTest do
-  use PulseWeb.ConnCase, async: true
+  use PulseWeb.ConnCase, async: false
 
   describe "admin LiveView routes" do
     test "redirect to /login when unauthenticated", %{conn: conn} do

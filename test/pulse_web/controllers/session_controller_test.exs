@@ -1,5 +1,5 @@
 defmodule PulseWeb.SessionControllerTest do
-  use PulseWeb.ConnCase, async: true
+  use PulseWeb.ConnCase, async: false
 
   describe "GET /login" do
     test "renders the form", %{conn: conn} do

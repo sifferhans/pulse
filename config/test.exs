@@ -12,7 +12,11 @@ config :phoenix_test, :endpoint, PulseWeb.Endpoint
 config :pulse, Pulse.Repo,
   database: Path.expand("../pulse_test.db", __DIR__),
   pool_size: 5,
-  pool: Ecto.Adapters.SQL.Sandbox
+  pool: Ecto.Adapters.SQL.Sandbox,
+  # WAL + a generous busy_timeout so async tests don't trip over SQLite's
+  # writer lock when many sandboxed connections commit at once.
+  journal_mode: :wal,
+  busy_timeout: 5_000
 
 # Don't auto-spawn monitor workers during tests; tests can start them
 # explicitly when needed.

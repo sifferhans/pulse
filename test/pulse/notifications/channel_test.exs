@@ -1,5 +1,5 @@
 defmodule Pulse.Notifications.ChannelTest do
-  use Pulse.DataCase, async: true
+  use Pulse.DataCase, async: false
 
   alias Pulse.Notifications.Channel
 

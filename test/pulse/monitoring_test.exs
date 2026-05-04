@@ -1,5 +1,5 @@
 defmodule Pulse.MonitoringTest do
-  use Pulse.DataCase, async: true
+  use Pulse.DataCase, async: false
 
   import Pulse.Fixtures
 

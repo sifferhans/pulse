@@ -1,5 +1,5 @@
 defmodule Pulse.Monitoring.MonitorTest do
-  use Pulse.DataCase, async: true
+  use Pulse.DataCase, async: false
 
   alias Pulse.Monitoring.Monitor
 

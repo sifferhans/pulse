@@ -1,5 +1,5 @@
 defmodule PulseWeb.PingControllerTest do
-  use PulseWeb.ConnCase, async: true
+  use PulseWeb.ConnCase, async: false
 
   import Pulse.Fixtures
 

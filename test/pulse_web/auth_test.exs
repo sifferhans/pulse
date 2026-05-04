@@ -1,5 +1,5 @@
 defmodule PulseWeb.AuthTest do
-  use PulseWeb.ConnCase, async: true
+  use PulseWeb.ConnCase, async: false
 
   alias PulseWeb.Auth
 
