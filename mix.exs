@@ -41,7 +41,7 @@ defmodule Pulse.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix_test, "~> 0.11.1", only: :test, runtime: false},
+      {:phoenix_test, "~> 0.11.1", only: :test},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:usage_rules, "~> 1.0", only: [:dev]},
       {:phoenix, "~> 1.8.1"},

@@ -11,7 +11,11 @@ Incidents notify your team over Slack, Discord, or Telegram, and roll up into pu
 
 > **Status:** early. Tagged `0.1.0`. Usable but a moving target — expect breaking changes between commits.
 
-<!-- ![Pulse dashboard](docs/screenshots/dashboard.png) -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dashboard-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="docs/screenshots/dashboard-light.png">
+  <img alt="Pulse dashboard" src="docs/screenshots/dashboard-light.png">
+</picture>
 
 ## Features
 
