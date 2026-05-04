@@ -139,6 +139,7 @@ defmodule Pulse.StatusPages do
     horizon = DateTime.add(now, -@history_days * 86_400, :second)
 
     latest_checks = Monitoring.latest_checks_by_monitor()
+
     open_heartbeat_incidents =
       Heartbeats.list_open_incidents() |> Map.new(&{&1.heartbeat_id, &1})
 

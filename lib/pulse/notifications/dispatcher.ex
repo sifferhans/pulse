@@ -47,16 +47,20 @@ defmodule Pulse.Notifications.Dispatcher do
   defp fan_out(channels, message) do
     for channel <- channels, channel.enabled do
       Task.Supervisor.start_child(Pulse.Notifications.TaskSupervisor, fn ->
-        case Notifications.send_message(channel, message) do
-          {:ok, _} ->
-            :ok
-
-          other ->
-            Logger.warning(
-              "Notification to channel #{channel.id} (#{channel.kind}) failed: #{inspect(other)}"
-            )
-        end
+        deliver(channel, message)
       end)
+    end
+  end
+
+  defp deliver(channel, message) do
+    case Notifications.send_message(channel, message) do
+      {:ok, _} ->
+        :ok
+
+      other ->
+        Logger.warning(
+          "Notification to channel #{channel.id} (#{channel.kind}) failed: #{inspect(other)}"
+        )
     end
   end
 

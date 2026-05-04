@@ -941,76 +941,76 @@ defmodule PulseWeb.CoreComponents do
       |> Enum.zip(pad_labels(labels, length(values)))
       |> Enum.reject(fn {v, _} -> is_nil(v) end)
 
-    cond do
-      length(pairs) < 2 ->
-        assigns = assign(assigns, :class, assigns.class)
+    if length(pairs) < 2 do
+      assigns = assign(assigns, :class, assigns.class)
 
-        ~H"""
-        <span class={["text-caption-1 text-text-hint", @class]}>—</span>
-        """
+      ~H"""
+      <span class={["text-caption-1 text-text-hint", @class]}>—</span>
+      """
+    else
+      only_values = Enum.map(pairs, &elem(&1, 0))
+      {min_v, max_v} = Enum.min_max(only_values)
+      range = max(max_v - min_v, 1)
+      n = length(pairs) - 1
+      w = assigns.width
+      h = assigns.height
+      pad = 2
 
-      true ->
-        only_values = Enum.map(pairs, &elem(&1, 0))
-        {min_v, max_v} = Enum.min_max(only_values)
-        range = max(max_v - min_v, 1)
-        n = length(pairs) - 1
-        w = assigns.width
-        h = assigns.height
-        pad = 2
+      column_w = (w - 2 * pad) / n
 
-        column_w = (w - 2 * pad) / n
+      plotted =
+        pairs
+        |> Enum.with_index()
+        |> Enum.map(fn {{v, label}, i} ->
+          x = pad + i * column_w
+          y = h - pad - (v - min_v) / range * (h - 2 * pad)
+          %{x: Float.round(x, 2), y: Float.round(y * 1.0, 2), label: label}
+        end)
 
-        plotted =
-          pairs
-          |> Enum.with_index()
-          |> Enum.map(fn {{v, label}, i} ->
-            x = pad + i * column_w
-            y = h - pad - (v - min_v) / range * (h - 2 * pad)
-            %{x: Float.round(x, 2), y: Float.round(y * 1.0, 2), label: label}
-          end)
+      coords = Enum.map_join(plotted, " ", fn %{x: x, y: y} -> "#{x},#{y}" end)
 
-        coords = Enum.map_join(plotted, " ", fn %{x: x, y: y} -> "#{x},#{y}" end)
+      assigns =
+        assigns
+        |> assign(:plotted, plotted)
+        |> assign(:coords, coords)
+        |> assign(:viewbox, "0 0 #{w} #{h}")
+        |> assign(:column_half, Float.round(column_w / 2, 2))
+        |> assign(:column_w, Float.round(column_w, 2))
+        |> assign(:height_v, h)
 
-        assigns =
-          assigns
-          |> assign(:plotted, plotted)
-          |> assign(:coords, coords)
-          |> assign(:viewbox, "0 0 #{w} #{h}")
-          |> assign(:column_half, Float.round(column_w / 2, 2))
-          |> assign(:column_w, Float.round(column_w, 2))
-          |> assign(:height_v, h)
-
-        ~H"""
-        <svg
-          viewBox={@viewbox}
-          width={@width}
-          height={@height}
-          class={["text-primary-contrast", @class]}
-          preserveAspectRatio="none"
-        >
-          <polyline
-            points={@coords}
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            vector-effect="non-scaling-stroke"
-          />
-          <g :if={Enum.any?(@plotted, & &1.label)}>
-            <rect
-              :for={point <- @plotted}
-              x={Float.round(point.x - @column_half, 2)}
-              y={0}
-              width={@column_w}
-              height={@height_v}
-              fill="transparent"
-              class="cursor-help"
-              pointer-events="all"
-            ><title>{point.label}</title></rect>
-          </g>
-        </svg>
-        """
+      ~H"""
+      <svg
+        viewBox={@viewbox}
+        width={@width}
+        height={@height}
+        class={["text-primary-contrast", @class]}
+        preserveAspectRatio="none"
+      >
+        <polyline
+          points={@coords}
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          vector-effect="non-scaling-stroke"
+        />
+        <g :if={Enum.any?(@plotted, & &1.label)}>
+          <rect
+            :for={point <- @plotted}
+            x={Float.round(point.x - @column_half, 2)}
+            y={0}
+            width={@column_w}
+            height={@height_v}
+            fill="transparent"
+            class="cursor-help"
+            pointer-events="all"
+          >
+            <title>{point.label}</title>
+          </rect>
+        </g>
+      </svg>
+      """
     end
   end
 

@@ -88,14 +88,12 @@ defmodule Pulse.Status do
           DateTime.new!(Date.add(date, 1), ~T[00:00:00], "Etc/UTC")
         end
 
-      cond do
-        DateTime.compare(day_end, inserted_at) != :gt ->
-          {date, :no_data}
-
-        true ->
-          effective_start = max_datetime(day_start, inserted_at)
-          pct = uptime_percentage(incidents, effective_start, day_end)
-          {date, bucket(pct)}
+      if DateTime.compare(day_end, inserted_at) != :gt do
+        {date, :no_data}
+      else
+        effective_start = max_datetime(day_start, inserted_at)
+        pct = uptime_percentage(incidents, effective_start, day_end)
+        {date, bucket(pct)}
       end
     end)
   end

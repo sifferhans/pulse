@@ -88,22 +88,20 @@ defmodule Pulse.Monitoring.Monitor do
     |> String.split(["\r\n", "\n"], trim: true)
     |> Enum.map(&String.trim/1)
     |> Enum.reject(&(&1 == ""))
-    |> Enum.reduce_while({:ok, %{}}, fn line, {:ok, acc} ->
-      case String.split(line, ":", parts: 2) do
-        [key, value] ->
-          key = String.trim(key)
-          value = String.trim(value)
+    |> Enum.reduce_while({:ok, %{}}, &parse_header_line/2)
+  end
 
-          if key == "" do
-            {:halt, {:error, line}}
-          else
-            {:cont, {:ok, Map.put(acc, key, value)}}
-          end
+  defp parse_header_line(line, {:ok, acc}) do
+    case String.split(line, ":", parts: 2) do
+      [key, value] ->
+        case {String.trim(key), String.trim(value)} do
+          {"", _} -> {:halt, {:error, line}}
+          {k, v} -> {:cont, {:ok, Map.put(acc, k, v)}}
+        end
 
-        _ ->
-          {:halt, {:error, line}}
-      end
-    end)
+      _ ->
+        {:halt, {:error, line}}
+    end
   end
 
   defp validate_url(changeset, field) do
