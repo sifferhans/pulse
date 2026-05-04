@@ -19,10 +19,14 @@ defmodule Pulse.Monitoring.WorkerSupervisor do
 
   @doc "Start a worker for a monitor; returns `:ok` whether starting or already started."
   def ensure_started(%Monitor{} = monitor) do
-    case DynamicSupervisor.start_child(__MODULE__, Worker.child_spec(monitor)) do
-      {:ok, _pid} -> :ok
-      {:error, {:already_started, _pid}} -> :ok
-      {:error, _} = error -> error
+    if workers_enabled?() do
+      case DynamicSupervisor.start_child(__MODULE__, Worker.child_spec(monitor)) do
+        {:ok, _pid} -> :ok
+        {:error, {:already_started, _pid}} -> :ok
+        {:error, _} = error -> error
+      end
+    else
+      :ok
     end
   end
 
@@ -43,6 +47,11 @@ defmodule Pulse.Monitoring.WorkerSupervisor do
   updates to existing workers.
   """
   def sync_all do
+    if workers_enabled?(), do: do_sync_all()
+    :ok
+  end
+
+  defp do_sync_all do
     enabled = Monitoring.list_enabled_monitors()
     enabled_ids = MapSet.new(enabled, & &1.id)
 
@@ -60,7 +69,7 @@ defmodule Pulse.Monitoring.WorkerSupervisor do
         pid -> GenServer.call(pid, {:replace_monitor, monitor})
       end
     end)
-
-    :ok
   end
+
+  defp workers_enabled?, do: Application.get_env(:pulse, :start_monitoring_workers, true)
 end

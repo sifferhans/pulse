@@ -17,7 +17,7 @@ metadata:
 ## Searching Documentation
 
 ```sh
-mix usage_rules.search_docs "search term" -p phoenix -p phoenix_ecto -p phoenix_html -p phoenix_live_dashboard -p phoenix_live_reload -p phoenix_live_view
+mix usage_rules.search_docs "search term" -p phoenix -p phoenix_ecto -p phoenix_html -p phoenix_live_dashboard -p phoenix_live_reload -p phoenix_live_view -p phoenix_test
 ```
 
 ## Available Mix Tasks

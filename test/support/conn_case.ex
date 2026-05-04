@@ -28,6 +28,7 @@ defmodule PulseWeb.ConnCase do
       import Plug.Conn
       import Phoenix.ConnTest
       import Phoenix.LiveViewTest
+      import PhoenixTest
       import PulseWeb.ConnCase
     end
   end

@@ -41,6 +41,7 @@ defmodule Pulse.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:phoenix_test, "~> 0.11.1", only: :test, runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:usage_rules, "~> 1.0", only: [:dev]},
       {:phoenix, "~> 1.8.1"},
@@ -50,7 +51,7 @@ defmodule Pulse.MixProject do
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 1.1.0"},
-      {:lazy_html, ">= 0.1.0", only: :test},
+      {:lazy_html, "~> 0.1.7"},
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},

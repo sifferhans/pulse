@@ -90,7 +90,7 @@ defmodule PulseWeb.StatusPageLive.Show do
         </:actions>
       </.header>
 
-      <div class="rounded-xl border border-border-1 bg-surface-default p-6 space-y-6">
+      <div class="space-y-6">
         <div class="text-caption-1 text-text-muted">
           Public URL: <span class="text-text-default">/status/{@status_page.slug}</span>
           · {if @status_page.enabled, do: "Enabled", else: "Disabled (returns 404)"}

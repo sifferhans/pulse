@@ -2,6 +2,8 @@ import Config
 
 config :pulse, :admin_password, "test-admin-password"
 
+config :phoenix_test, :endpoint, PulseWeb.Endpoint
+
 # Configure your database
 #
 # The MIX_TEST_PARTITION environment variable can be used
