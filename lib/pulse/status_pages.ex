@@ -211,7 +211,7 @@ defmodule Pulse.StatusPages do
     monitor
     |> Monitoring.list_recent_checks(@latency_points)
     |> Enum.reverse()
-    |> Enum.map(& &1.latency_ms)
+    |> Enum.map(&{&1.ran_at, &1.latency_ms})
   end
 
   defp combined_incidents(monitor_summaries, heartbeat_summaries) do

@@ -830,7 +830,11 @@ defmodule PulseWeb.CoreComponents do
         class="flex items-center gap-3"
       >
         <span class="text-caption-1 text-text-muted shrink-0">Latency</span>
-        <.sparkline points={@entry.latency_points} class="flex-1 w-full" />
+        <.sparkline
+          points={Enum.map(@entry.latency_points, &elem(&1, 1))}
+          labels={Enum.map(@entry.latency_points, &latency_label/1)}
+          class="flex-1 w-full"
+        />
         <span class="text-caption-1 text-text-default shrink-0">
           {format_avg_latency(@entry.latency_points)}
         </span>
@@ -838,6 +842,11 @@ defmodule PulseWeb.CoreComponents do
     </article>
     """
   end
+
+  defp latency_label({%DateTime{} = ran_at, ms}) when is_integer(ms),
+    do: "#{Calendar.strftime(ran_at, "%H:%M")} · #{ms} ms"
+
+  defp latency_label({_ran_at, _}), do: nil
 
   defp format_percentage(pct) when is_float(pct) do
     cond do
@@ -848,9 +857,14 @@ defmodule PulseWeb.CoreComponents do
   end
 
   defp format_avg_latency(points) do
-    case Enum.reject(points, &is_nil/1) do
+    values =
+      points
+      |> Enum.map(&elem(&1, 1))
+      |> Enum.reject(&is_nil/1)
+
+    case values do
       [] -> "—"
-      values -> "#{round(Enum.sum(values) / length(values))} ms"
+      _ -> "#{round(Enum.sum(values) / length(values))} ms"
     end
   end
 
@@ -908,18 +922,27 @@ defmodule PulseWeb.CoreComponents do
 
   @doc """
   Renders a small inline SVG sparkline. `points` is a list of numbers
-  (oldest → newest); `nil` entries are skipped.
+  (oldest → newest); `nil` entries are skipped. Optional `labels` is a
+  parallel list of strings used as native hover tooltips on per-point
+  markers — pass it to make the chart inspectable.
   """
   attr :points, :list, required: true
+  attr :labels, :list, default: []
   attr :width, :integer, default: 120
   attr :height, :integer, default: 28
   attr :class, :any, default: nil
 
   def sparkline(assigns) do
-    values = Enum.reject(assigns.points, &is_nil/1)
+    values = assigns.points
+    labels = assigns.labels
+
+    pairs =
+      values
+      |> Enum.zip(pad_labels(labels, length(values)))
+      |> Enum.reject(fn {v, _} -> is_nil(v) end)
 
     cond do
-      length(values) < 2 ->
+      length(pairs) < 2 ->
         assigns = assign(assigns, :class, assigns.class)
 
         ~H"""
@@ -927,26 +950,35 @@ defmodule PulseWeb.CoreComponents do
         """
 
       true ->
-        {min_v, max_v} = Enum.min_max(values)
+        only_values = Enum.map(pairs, &elem(&1, 0))
+        {min_v, max_v} = Enum.min_max(only_values)
         range = max(max_v - min_v, 1)
-        n = length(values) - 1
+        n = length(pairs) - 1
         w = assigns.width
         h = assigns.height
         pad = 2
 
-        coords =
-          values
+        column_w = (w - 2 * pad) / n
+
+        plotted =
+          pairs
           |> Enum.with_index()
-          |> Enum.map_join(" ", fn {v, i} ->
-            x = pad + i * (w - 2 * pad) / n
+          |> Enum.map(fn {{v, label}, i} ->
+            x = pad + i * column_w
             y = h - pad - (v - min_v) / range * (h - 2 * pad)
-            "#{Float.round(x, 2)},#{Float.round(y * 1.0, 2)}"
+            %{x: Float.round(x, 2), y: Float.round(y * 1.0, 2), label: label}
           end)
+
+        coords = Enum.map_join(plotted, " ", fn %{x: x, y: y} -> "#{x},#{y}" end)
 
         assigns =
           assigns
+          |> assign(:plotted, plotted)
           |> assign(:coords, coords)
           |> assign(:viewbox, "0 0 #{w} #{h}")
+          |> assign(:column_half, Float.round(column_w / 2, 2))
+          |> assign(:column_w, Float.round(column_w, 2))
+          |> assign(:height_v, h)
 
         ~H"""
         <svg
@@ -955,7 +987,6 @@ defmodule PulseWeb.CoreComponents do
           height={@height}
           class={["text-primary-contrast", @class]}
           preserveAspectRatio="none"
-          aria-hidden="true"
         >
           <polyline
             points={@coords}
@@ -966,9 +997,25 @@ defmodule PulseWeb.CoreComponents do
             stroke-linejoin="round"
             vector-effect="non-scaling-stroke"
           />
+          <g :if={Enum.any?(@plotted, & &1.label)}>
+            <rect
+              :for={point <- @plotted}
+              x={Float.round(point.x - @column_half, 2)}
+              y={0}
+              width={@column_w}
+              height={@height_v}
+              fill="transparent"
+              class="cursor-help"
+              pointer-events="all"
+            ><title>{point.label}</title></rect>
+          </g>
         </svg>
         """
     end
+  end
+
+  defp pad_labels(labels, n) do
+    Enum.concat(labels, List.duplicate(nil, max(n - length(labels), 0)))
   end
 
   @doc """
