@@ -1,5 +1,9 @@
 import Config
 
+# Default dev admin password. Override by setting PULSE_ADMIN_PASSWORD before
+# `mix phx.server`.
+config :pulse, :admin_password, System.get_env("PULSE_ADMIN_PASSWORD") || "admin"
+
 # Configure your database
 config :pulse, Pulse.Repo,
   database: Path.expand("../pulse_dev.db", __DIR__),

@@ -1,0 +1,33 @@
+<Layouts.public flash={@flash}>
+  <div class="grow flex items-center justify-center">
+    <div class="w-full max-w-sm space-y-6">
+      <div class="text-center space-y-2">
+        <.icon name="hero-bolt" class="size-8 text-primary-contrast mx-auto" />
+        <h1 class="text-title-1 font-semibold text-text-default italic">Pulse</h1>
+        <p class="text-body-2 text-text-muted">Sign in to continue.</p>
+      </div>
+
+      <form action={~p"/login"} method="post" class="space-y-4">
+        <input type="hidden" name="_csrf_token" value={get_csrf_token()} />
+
+        <label class="block">
+          <span class="block mb-1 text-title-3 text-text-default">Password</span>
+          <input
+            type="password"
+            name="password"
+            autofocus
+            required
+            class="w-full rounded-md border border-border-1 bg-surface-default text-text-default text-body-2 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-focus-ring"
+          />
+        </label>
+
+        <p :if={@error} class="flex gap-2 items-center text-body-3 text-semantic-error">
+          <.icon name="hero-exclamation-circle" class="size-5" />
+          {@error}
+        </p>
+
+        <.button type="submit" class="w-full justify-center">Sign in</.button>
+      </form>
+    </div>
+  </div>
+</Layouts.public>

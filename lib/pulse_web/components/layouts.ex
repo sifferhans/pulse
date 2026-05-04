@@ -64,6 +64,15 @@ defmodule PulseWeb.Layouts do
             <li>
               <.theme_toggle />
             </li>
+            <li>
+              <.link
+                href={~p"/logout"}
+                method="delete"
+                class="inline-flex items-center px-3 py-2 rounded-md text-title-3 text-text-default hover:bg-surface-indent"
+              >
+                Sign out
+              </.link>
+            </li>
           </ul>
         </div>
       </div>

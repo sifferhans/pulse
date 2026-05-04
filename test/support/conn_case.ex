@@ -27,6 +27,7 @@ defmodule PulseWeb.ConnCase do
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
+      import Phoenix.LiveViewTest
       import PulseWeb.ConnCase
     end
   end
@@ -34,5 +35,15 @@ defmodule PulseWeb.ConnCase do
   setup tags do
     Pulse.DataCase.setup_sandbox(tags)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
+  end
+
+  @doc """
+  Returns a `conn` with the admin session marked as authenticated. Useful for
+  LiveView tests that exercise admin routes.
+  """
+  def log_in_admin(conn) do
+    conn
+    |> Phoenix.ConnTest.init_test_session(%{})
+    |> Plug.Conn.put_session(:admin_authenticated, true)
   end
 end

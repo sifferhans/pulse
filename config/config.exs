@@ -9,7 +9,8 @@ import Config
 
 config :pulse,
   ecto_repos: [Pulse.Repo],
-  generators: [timestamp_type: :utc_datetime]
+  generators: [timestamp_type: :utc_datetime],
+  admin_password: nil
 
 # Configures the endpoint
 config :pulse, PulseWeb.Endpoint,

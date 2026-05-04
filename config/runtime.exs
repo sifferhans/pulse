@@ -21,6 +21,15 @@ if System.get_env("PHX_SERVER") do
 end
 
 if config_env() == :prod do
+  admin_password =
+    System.get_env("PULSE_ADMIN_PASSWORD") ||
+      raise """
+      environment variable PULSE_ADMIN_PASSWORD is missing.
+      Set it to the password you want to use for the Pulse admin UI.
+      """
+
+  config :pulse, :admin_password, admin_password
+
   database_path =
     System.get_env("DATABASE_PATH") ||
       raise """
