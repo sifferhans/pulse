@@ -116,7 +116,6 @@ defmodule Pulse.StatusPages do
   ## Summary / history
 
   @history_days 90
-  @latency_points 30
   @incident_limit 20
 
   @uptime_windows [
@@ -130,8 +129,7 @@ defmodule Pulse.StatusPages do
 
   @doc """
   Builds everything needed to render a status page: current status per item,
-  90-day daily uptime bars, uptime windows, monitor latency series, and a
-  combined incident timeline.
+  90-day daily uptime bars, uptime windows, and a combined incident timeline.
 
   Pure on top of the contexts — safe to call from a LiveView.
   """
@@ -143,57 +141,60 @@ defmodule Pulse.StatusPages do
     open_heartbeat_incidents =
       Heartbeats.list_open_incidents() |> Map.new(&{&1.heartbeat_id, &1})
 
-    monitor_summaries =
+    monitor_entries =
       Enum.map(page.monitors, fn monitor ->
         incidents = Monitoring.list_incidents_since(monitor, horizon)
-        latency = monitor_latency_series(monitor)
 
         %{
-          kind: :monitor,
           item: monitor,
           status: Status.monitor_status(monitor, Map.get(latest_checks, monitor.id)),
           daily: Status.daily_uptime(monitor, incidents, @history_days, now),
           windows: window_uptimes(monitor, incidents, now),
-          latency_points: latency,
           incidents: incidents
         }
       end)
 
-    heartbeat_summaries =
+    heartbeat_entries =
       Enum.map(page.heartbeats, fn heartbeat ->
         incidents = Heartbeats.list_incidents_since(heartbeat, horizon)
 
+        status =
+          Status.heartbeat_status(heartbeat, Map.get(open_heartbeat_incidents, heartbeat.id))
+
         %{
-          kind: :heartbeat,
           item: heartbeat,
-          status:
-            Status.heartbeat_status(
-              heartbeat,
-              Map.get(open_heartbeat_incidents, heartbeat.id)
-            ),
+          status: public_status(status),
           daily: Status.daily_uptime(heartbeat, incidents, @history_days, now),
           windows: window_uptimes(heartbeat, incidents, now),
-          latency_points: nil,
           incidents: incidents
         }
       end)
 
+    entries =
+      (monitor_entries ++ heartbeat_entries)
+      |> Enum.sort_by(&String.downcase(&1.item.name))
+
     overall =
       cond do
-        Enum.any?(monitor_summaries, &(&1.status == :down)) -> :down
-        Enum.any?(heartbeat_summaries, &(&1.status == :missed)) -> :down
-        monitor_summaries == [] and heartbeat_summaries == [] -> :pending
+        Enum.any?(entries, &(&1.status == :down)) -> :down
+        entries == [] -> :pending
         true -> :up
       end
 
     %{
       page: page,
-      monitors: monitor_summaries,
-      heartbeats: heartbeat_summaries,
+      entries: entries,
       overall: overall,
-      incidents: combined_incidents(monitor_summaries, heartbeat_summaries)
+      incidents: combined_incidents(monitor_entries, heartbeat_entries)
     }
   end
+
+  # Map heartbeat-specific atoms to a common public vocabulary so the status
+  # page never exposes whether a service is implemented as a monitor or a
+  # heartbeat.
+  defp public_status(:alive), do: :up
+  defp public_status(:missed), do: :down
+  defp public_status(other), do: other
 
   defp window_uptimes(item, incidents, now) do
     Enum.map(@uptime_windows, fn {key, seconds, label} ->
@@ -208,19 +209,11 @@ defmodule Pulse.StatusPages do
 
   defp max_dt(a, b), do: if(DateTime.compare(a, b) == :gt, do: a, else: b)
 
-  defp monitor_latency_series(monitor) do
-    monitor
-    |> Monitoring.list_recent_checks(@latency_points)
-    |> Enum.reverse()
-    |> Enum.map(&{&1.ran_at, &1.latency_ms})
-  end
-
-  defp combined_incidents(monitor_summaries, heartbeat_summaries) do
-    monitor_entries =
-      Enum.flat_map(monitor_summaries, fn %{item: monitor, incidents: incidents} ->
+  defp combined_incidents(monitor_entries, heartbeat_entries) do
+    monitor_incidents =
+      Enum.flat_map(monitor_entries, fn %{item: monitor, incidents: incidents} ->
         Enum.map(incidents, fn i ->
           %{
-            kind: :monitor,
             item_name: monitor.name,
             started_at: i.started_at,
             ended_at: i.ended_at,
@@ -229,11 +222,10 @@ defmodule Pulse.StatusPages do
         end)
       end)
 
-    heartbeat_entries =
-      Enum.flat_map(heartbeat_summaries, fn %{item: heartbeat, incidents: incidents} ->
+    heartbeat_incidents =
+      Enum.flat_map(heartbeat_entries, fn %{item: heartbeat, incidents: incidents} ->
         Enum.map(incidents, fn i ->
           %{
-            kind: :heartbeat,
             item_name: heartbeat.name,
             started_at: i.started_at,
             ended_at: i.ended_at,
@@ -242,7 +234,7 @@ defmodule Pulse.StatusPages do
         end)
       end)
 
-    (monitor_entries ++ heartbeat_entries)
+    (monitor_incidents ++ heartbeat_incidents)
     |> Enum.sort_by(& &1.started_at, {:desc, DateTime})
     |> Enum.take(@incident_limit)
   end
