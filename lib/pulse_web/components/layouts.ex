@@ -102,15 +102,12 @@ defmodule PulseWeb.Layouts do
         {render_slot(@inner_block)}
 
         <footer class="pt-8 text-center text-caption-1 text-text-hint mt-auto">
-          <.link
-            navigate={~p"/"}
-            class="inline-flex items-center gap-1 hover:text-text-muted italic"
-          >
+          <p class="inline-flex items-center gap-1 italic">
             <span>Powered by</span>
             <span class="flex items-center gap-0.5">
               <.icon name="hero-bolt-mini" class="size-3 text-primary-contrast" /> Pulse
             </span>
-          </.link>
+          </p>
         </footer>
       </div>
     </main>
